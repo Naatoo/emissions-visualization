@@ -48,7 +48,7 @@ class InteractiveMap:
         return map_folium
 
     def write_to_file(self, target_name: str=None, target_directory: str=None) -> None:
-        self.target_name = target_name if target_name else self.file_name
+        self.target_name = target_name if target_name else "{}.html".format(self.file_name)
         self.target_directory = target_directory if target_directory else self.target_directory
         self.map.save(self.target_name)
 
