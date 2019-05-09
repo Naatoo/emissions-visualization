@@ -8,7 +8,8 @@ from typing import List
 
 class Interpolator:
 
-    def __init__(self, raw_data: List[tuple], coordinates: List[tuple], boundary_values) -> None:
+    def __init__(self, target_file_name: str, raw_data: List[tuple], coordinates: List[tuple], boundary_values) -> None:
+        self.target_file_name = target_file_name
         self.raw_data = raw_data
         self.coordinates = coordinates
         self.boundary_values = boundary_values
@@ -99,16 +100,15 @@ class Interpolator:
             l.append((a, b))
         return [l]
 
-    @staticmethod
-    def create_files(collection, values):
-        with open("zoomed_data.json", "w") as pm10_json:
+    def create_files(self, collection, values):
+        with open("{}.json".format(self.target_file_name), "w") as pm10_json:
             text = {
                 "type": "FeatureCollection",
                 "features": "{}"
             }
             pm10_json.write(text["features"].format(collection))
 
-        with open('zoomed_data.csv', 'w') as csvfile:
+        with open('{}.csv'.format(self.target_file_name), 'w') as csvfile:
             filewriter = csv.writer(csvfile, delimiter=',',
                                     quotechar='|', quoting=csv.QUOTE_MINIMAL)
             filewriter.writerow(['id', 'value'])
