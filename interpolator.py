@@ -20,10 +20,12 @@ class Interpolator:
     @staticmethod
     def __generate_possible_coordinates(boundary_values):
         initial_resolution = 0.1
-        possible_lat = [x / 100 for x in range(boundary_values["lat_min"], boundary_values["lat_max"],
-                                                int(initial_resolution * 100))]
-        possible_lon = [x / 100 for x in range(boundary_values["lon_min"], boundary_values["lon_max"],
-                                                int(initial_resolution * 100))]
+        possible_lat = [x / 1000 for x in range(boundary_values["lat_min"],
+                                                boundary_values["lat_max"],
+                                                int(initial_resolution * 1000))]
+        possible_lon = [x / 1000 for x in range(boundary_values["lon_min"],
+                                                boundary_values["lon_max"],
+                                                int(initial_resolution * 1000))]
         return possible_lat, possible_lon
 
     def slice_data_by_coordinates(self):
@@ -54,17 +56,19 @@ class Interpolator:
         return flatten
 
     def zoom_coordinates(self, zoom_value: int):
-        final_lat_iterable = [x for x in range(self.boundary_values["lat_min"], self.boundary_values["lat_max"], int(10 / zoom_value))]
-        final_lat_iterable.insert(0, self.boundary_values["lat_min"] - int(10 / zoom_value))
+        coords_coeff = int(0.1 / zoom_value / 2 * 1000) * (zoom_value - 1)
+        final_lat_iterable = [x for x in range(self.boundary_values["lat_min"] - coords_coeff,
+                                               self.boundary_values["lat_max"] + coords_coeff,
+                                               int(100 / zoom_value))]
 
-        final_lon_iterable = [x for x in range(self.boundary_values["lon_min"], self.boundary_values["lon_max"], int(10 / zoom_value))]
-        final_lon_iterable.insert(0, self.boundary_values["lon_min"] - int(10 / zoom_value))
-
+        final_lon_iterable = [x for x in range(self.boundary_values["lon_min"] - coords_coeff,
+                                               self.boundary_values["lon_max"] + coords_coeff,
+                                               int(100 / zoom_value))]
         final_coords = []
         for num_lat in reversed(final_lat_iterable):
-            lat = num_lat / 100
+            lat = num_lat / 1000
             for num_lon in final_lon_iterable:
-                lon = num_lon / 100
+                lon = num_lon / 1000
                 if (lat, lon) not in final_coords:
                     final_coords.append((lat, lon))
         return final_coords

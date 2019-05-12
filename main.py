@@ -16,10 +16,10 @@ if __name__ == "__main__":
     country_code = "PL"
     zoom_value = 2
     boundaries = {
-        "lat_min": 1905,
-        "lat_max": 2006,
-        "lon_min": 4905,
-        "lon_max": 5006
+        "lat_min": 19550,
+        "lat_max": 20051,
+        "lon_min": 49550,
+        "lon_max": 50051
     }
     create_csv_json_files()
 
