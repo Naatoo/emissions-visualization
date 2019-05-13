@@ -13,19 +13,19 @@ class Interpolator:
         self.raw_data = raw_data
         self.coordinates = coordinates
         self.boundary_values = boundary_values
+        self.grid_resolution_degree = 0.1
         self.possible_lat, self.possible_lon = self.__generate_possible_coordinates(boundary_values)
+
         self.sliced_data = []
         self.slice_data_by_coordinates()
 
-    @staticmethod
-    def __generate_possible_coordinates(boundary_values):
-        initial_resolution = 0.1
+    def __generate_possible_coordinates(self, boundary_values):
         possible_lat = [x / 1000 for x in range(boundary_values["lat_min"],
                                                 boundary_values["lat_max"],
-                                                int(initial_resolution * 1000))]
+                                                int(self.grid_resolution_degree * 1000))]
         possible_lon = [x / 1000 for x in range(boundary_values["lon_min"],
                                                 boundary_values["lon_max"],
-                                                int(initial_resolution * 1000))]
+                                                int(self.grid_resolution_degree * 1000))]
         return possible_lat, possible_lon
 
     def slice_data_by_coordinates(self):
@@ -56,7 +56,7 @@ class Interpolator:
         return flatten
 
     def zoom_coordinates(self, zoom_value: int):
-        coords_coeff = int(0.1 / zoom_value / 2 * 1000) * (zoom_value - 1)
+        coords_coeff = int(self.grid_resolution_degree / zoom_value / 2 * 1000) * (zoom_value - 1)
         final_lat_iterable = [x for x in range(self.boundary_values["lat_min"] - coords_coeff,
                                                self.boundary_values["lat_max"] + coords_coeff,
                                                int(100 / zoom_value))]
@@ -79,7 +79,7 @@ class Interpolator:
         zoomed_coordinates = self.zoom_coordinates(zoom_value)
         features = []
         values = []
-        coeff = 0.1 / zoom_value
+        coeff = self.grid_resolution_degree / zoom_value
         for index, (lat, lon) in enumerate(zoomed_coordinates):
             coords = self.generate_square_coordinates(str(lat), str(lon), coeff=coeff)
             value = zoomed_values[index]
