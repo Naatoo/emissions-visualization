@@ -30,7 +30,6 @@ class CSVFileParser:
         # TODO lat, lon
         return country
 
-
     @property
     def coordinates(self):
         """

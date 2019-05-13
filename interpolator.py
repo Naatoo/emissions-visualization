@@ -48,10 +48,10 @@ class Interpolator:
         """
         self.sliced_data.sort(key=lambda x: (-x[0], x[1]))
 
-    def zoom_values(self, zoom_value: int):
+    def zoom_values(self, zoom_value: int, order: int=3):
         values_list = [row[2] for row in self.sliced_data]
         values_array = np.array(values_list).reshape(len(self.possible_lat), len(self.possible_lon))
-        zoomed = ndimage.zoom(values_array, zoom_value, order=1)
+        zoomed = ndimage.zoom(values_array, zoom_value, order=order)
         flatten = zoomed.flatten()
         return flatten
 
@@ -73,9 +73,9 @@ class Interpolator:
                     final_coords.append((lat, lon))
         return final_coords
 
-    def interpolate(self, zoom_value: int):
+    def interpolate(self, zoom_value: int, order: int):
         self.sort_data()
-        zoomed_values = self.zoom_values(zoom_value)
+        zoomed_values = self.zoom_values(zoom_value, order)
         zoomed_coordinates = self.zoom_coordinates(zoom_value)
         features = []
         values = []

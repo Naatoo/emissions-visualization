@@ -6,7 +6,7 @@ from interactive_map import InteractiveMap
 def create_csv_json_files() -> None:
     parser = CSVFileParser(source_file_name,  **{"country": country_code})
     interpolator = Interpolator(target_file_name, parser.data, parser.coordinates, boundary_values=boundaries)
-    interpolator.interpolate(zoom_value=zoom_value)
+    interpolator.interpolate(zoom_value=zoom_value, order=order)
 
 
 if __name__ == "__main__":
@@ -14,7 +14,8 @@ if __name__ == "__main__":
     source_file_name = "PM10_raw.txt"
     target_file_name = "PM10_zoomed"
     country_code = "PL"
-    zoom_value = 2
+    zoom_value = 10
+    order = 5
     boundaries = {
         "lat_min": 19550,
         "lat_max": 20051,
