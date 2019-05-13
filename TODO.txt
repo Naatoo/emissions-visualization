@@ -1,0 +1,3 @@
+add branca - style function
+handle inputs - using flask methods
+data in big cities equals 0
