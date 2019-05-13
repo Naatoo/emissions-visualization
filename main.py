@@ -14,13 +14,13 @@ if __name__ == "__main__":
     source_file_name = "PM10_raw.txt"
     target_file_name = "PM10_zoomed"
     country_code = "PL"
-    zoom_value = 10
+    zoom_value = 2
     order = 5
     boundaries = {
-        "lat_min": 19550,
-        "lat_max": 20051,
-        "lon_min": 49550,
-        "lon_max": 50051
+        "lat_min": 18.55,
+        "lat_max": 22.05,
+        "lon_min": 49.55,
+        "lon_max": 53.05
     }
     create_csv_json_files()
 
