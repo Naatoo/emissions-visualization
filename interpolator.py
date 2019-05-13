@@ -3,7 +3,7 @@ import numpy as np
 import scipy.ndimage as ndimage
 
 from geojson import Polygon, Feature, FeatureCollection
-from typing import List
+from typing import List, Tuple
 
 
 class Interpolator:
@@ -12,19 +12,30 @@ class Interpolator:
         self.target_file_name = target_file_name
         self.raw_data = raw_data
         self.coordinates = coordinates
-        self.boundary_values = boundary_values
+        self.boundary_values = self.__generate_boundary_coordinates(boundary_values)
         self.grid_resolution_degree = 0.1
-        self.possible_lat, self.possible_lon = self.__generate_possible_coordinates(boundary_values)
+        self.possible_lat, self.possible_lon = self.__generate_possible_coordinates()
 
         self.sliced_data = []
         self.slice_data_by_coordinates()
 
-    def __generate_possible_coordinates(self, boundary_values):
-        possible_lat = [x / 1000 for x in range(boundary_values["lat_min"],
-                                                boundary_values["lat_max"],
+    @staticmethod
+    def __generate_boundary_coordinates(boundary_values: dict) -> dict:
+        for key, value in boundary_values.items():
+            value_check = value * 100
+            if value_check % 5 == 0 and value_check % 10 != 0:
+                formatted_value = int(value * 1000) if "min" in key else int(value * 1000 + 1)
+                boundary_values[key] = formatted_value
+            else:
+                raise ValueError("Coordinate format must be: XX.X5. Actual value: {}".format(value))
+        return boundary_values
+
+    def __generate_possible_coordinates(self) -> Tuple[list, list]:
+        possible_lat = [x / 1000 for x in range(self.boundary_values["lat_min"],
+                                                self.boundary_values["lat_max"],
                                                 int(self.grid_resolution_degree * 1000))]
-        possible_lon = [x / 1000 for x in range(boundary_values["lon_min"],
-                                                boundary_values["lon_max"],
+        possible_lon = [x / 1000 for x in range(self.boundary_values["lon_min"],
+                                                self.boundary_values["lon_max"],
                                                 int(self.grid_resolution_degree * 1000))]
         return possible_lat, possible_lon
 
@@ -73,7 +84,10 @@ class Interpolator:
                     final_coords.append((lat, lon))
         return final_coords
 
-    def interpolate(self, zoom_value: int, order: int):
+    def interpolate(self, zoom_value: int, order: int) -> None:
+        possible_zoom_values = 1, 2, 3, 5, 10, 25
+        assert zoom_value in possible_zoom_values, \
+            "Chosen zoom value: {} is not in possible zoom values: {}".format(zoom_value, possible_zoom_values)
         self.sort_data()
         zoomed_values = self.zoom_values(zoom_value, order)
         zoomed_coordinates = self.zoom_coordinates(zoom_value)
