@@ -94,7 +94,10 @@ class Interpolator:
         features = []
         values = []
         coeff = self.grid_resolution_degree / zoom_value
+
+        data_for_heatmap = []
         for index, (lat, lon) in enumerate(zoomed_coordinates):
+            data_for_heatmap.append((lat, lon, zoomed_values[index]))
             coords = self.generate_square_coordinates(str(lat), str(lon), coeff=coeff)
             value = zoomed_values[index]
             feature = Feature(
@@ -105,7 +108,7 @@ class Interpolator:
             features.append(feature)
             values.append((index, value))
         collection = FeatureCollection(features)
-        self.create_files(collection, values)
+        self.create_files(collection, values, data_for_heatmap)
 
     @staticmethod
     def generate_square_coordinates(lat: str, lon: str, coeff) -> list:
@@ -118,7 +121,7 @@ class Interpolator:
             l.append((a, b))
         return [l]
 
-    def create_files(self, collection, values):
+    def create_files(self, collection, values, data_for_heatmap):
         with open("{}.json".format(self.target_file_name), "w") as pm10_json:
             text = {
                 "type": "FeatureCollection",
@@ -132,3 +135,7 @@ class Interpolator:
             filewriter.writerow(['id', 'value'])
             for row in values:
                 filewriter.writerow(row)
+
+        with open("{}_heatmap_data.txt".format(self.target_file_name), "w") as heatmap_txt:
+            for row in data_for_heatmap:
+                heatmap_txt.writelines("{},{},{}\n".format(*row))
