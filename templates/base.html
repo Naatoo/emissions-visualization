@@ -1,0 +1,34 @@
+<!doctype html>
+<title>{{ title }}</title>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+<link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+<nav>
+    <div class="container topnav">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand topnav">Emissions</a>
+        </div>
+    </div>
+</nav>
+<section class="content">
+    <header>
+
+
+        <div class="left">
+            <p>{% block header %}{% endblock %}</p>
+        </div>
+        <div class="right">
+                {% block content %}{% endblock %}
+        </div>
+    </header>
+</section>
+
+

@@ -1,0 +1,25 @@
+{% import "bootstrap/utils.html" as utils %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends 'base.html' %}
+
+
+{% block header %}
+<div class="content-section">
+    <div class="center">
+        <br/>
+        {{ wtf.quick_form(form) }}
+    </div>
+</div>
+{% endblock %}
+
+
+{% block content %}
+{{ the_div|safe }}
+<div class="content-section">
+    <div class="center">
+        <iframe frameborder='0' noresize='noresize' style='position: absolute; background: transparent; width: 60%; height: 70%;' src="/map_render" frameborder="0"></iframe>
+    </div>
+</div>
+
+{{ the_script|safe }}
+{% endblock %}
