@@ -8,14 +8,16 @@ from app.map_tools.interactive_map import InteractiveMap
 from app.home import home
 from app.home.map_zoom_form import MapForm
 
+from app.tools.paths import PM10_RAW_FILE
+
 
 def create_csv_json_files(boundaries: dict, zoom_value: int) -> None:
     order = 5
-    source_file_name = "app/resources/PM10_raw.txt"
-    target_file_name = "PM10_zoomed"
+    source_file_name = PM10_RAW_FILE
+    # target_file_name = "PM10_zoomed"
     country_code = "PL"
     parser = CSVFileParser(source_file_name, **{"country": country_code})
-    interpolator = Interpolator(target_file_name, parser.data, parser.coordinates, boundary_values=boundaries)
+    interpolator = Interpolator(parser.data, parser.coordinates, boundary_values=boundaries)
     interpolator.interpolate(zoom_value=zoom_value, order=order)
 
 

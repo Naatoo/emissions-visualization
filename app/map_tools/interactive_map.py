@@ -3,6 +3,8 @@ import os
 import pandas as pd
 from selenium import webdriver
 
+from app.tools.paths import PM10_CSV_FILE, PM10_JSON_FILE
+
 
 class InteractiveMap:
 
@@ -26,11 +28,11 @@ class InteractiveMap:
         self.target_directory = os.getcwd()
 
     def _read_csv(self):
-        return pd.read_csv("{}.csv".format(self.file_name))
+        return pd.read_csv(PM10_CSV_FILE)
 
     def _create_choropleth(self) -> folium.Choropleth:
         choropleth = folium.Choropleth(
-            geo_data="{}.json".format(self.file_name),
+            geo_data=PM10_JSON_FILE,
             name=self.layer_name,
             data=self.csv_file,
             columns=self.columns_names,
