@@ -5,11 +5,12 @@ import scipy.ndimage as ndimage
 from geojson import Polygon, Feature, FeatureCollection
 from typing import List, Tuple
 
+from app.tools.paths import PM10_CSV_FILE, PM10_JSON_FILE
+
 
 class Interpolator:
 
-    def __init__(self, target_file_name: str, raw_data: List[tuple], coordinates: List[tuple], boundary_values) -> None:
-        self.target_file_name = target_file_name
+    def __init__(self, raw_data: List[tuple], coordinates: List[tuple], boundary_values) -> None:
         self.raw_data = raw_data
         self.coordinates = coordinates
         self.boundary_values = self.__generate_boundary_coordinates(boundary_values)
@@ -121,21 +122,24 @@ class Interpolator:
             l.append((a, b))
         return [l]
 
-    def create_files(self, collection, values, data_for_heatmap):
-        with open("{}.json".format(self.target_file_name), "w") as pm10_json:
+    @staticmethod
+    def create_files(collection, values, data_for_heatmap):
+        # with open("{}.json".format(self.target_file_name), "w") as pm10_json:
+        with open(PM10_JSON_FILE, "w") as pm10_json:
             text = {
                 "type": "FeatureCollection",
                 "features": "{}"
             }
             pm10_json.write(text["features"].format(collection))
 
-        with open('{}.csv'.format(self.target_file_name), 'w') as csvfile:
+        # with open('{}.csv'.format(self.target_file_name), 'w') as csvfile:
+        with open(PM10_CSV_FILE, 'w') as csvfile:
             filewriter = csv.writer(csvfile, delimiter=',',
                                     quotechar='|', quoting=csv.QUOTE_MINIMAL)
             filewriter.writerow(['id', 'value'])
             for row in values:
                 filewriter.writerow(row)
-
-        with open("{}_heatmap_data.txt".format(self.target_file_name), "w") as heatmap_txt:
-            for row in data_for_heatmap:
-                heatmap_txt.writelines("{},{},{}\n".format(*row))
+        #
+        # with open("{}_heatmap_data.txt".format(self.target_file_name), "w") as heatmap_txt:
+        #     for row in data_for_heatmap:
+        #         heatmap_txt.writelines("{},{},{}\n".format(*row))
