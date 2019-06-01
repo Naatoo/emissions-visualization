@@ -6,6 +6,7 @@ from geojson import Polygon, Feature, FeatureCollection
 from typing import List, Tuple
 
 from app.tools.paths import PM10_CSV_FILE, PM10_JSON_FILE
+import itertools
 
 
 class Interpolator:
@@ -13,45 +14,55 @@ class Interpolator:
     def __init__(self, raw_data: List[tuple], coordinates: List[tuple], boundary_values) -> None:
         self.raw_data = raw_data
         self.coordinates = coordinates
+        self.multiplifier = 1000
+        self.grid_resolution_degree = self.__generate_grid_resolution_degree()
         self.boundary_values = self.__generate_boundary_coordinates(boundary_values)
-        self.grid_resolution_degree = 0.1
-        self.possible_lat, self.possible_lon = self.__generate_possible_coordinates()
+        self.possible_lon, self.possible_lat = self.__generate_possible_coordinates()
 
         self.sliced_data = []
         self.slice_data_by_coordinates()
 
+    def __generate_grid_resolution_degree(self):
+        lon_1, lat_1, lon_2, lat_2 = list(itertools.chain(*(self.raw_data[index][:2] for index in range(2))))
+        res = abs(lon_1) - abs(lon_2) if lon_1 != lon_2 else abs(lat_1) - abs(lat_2)
+        if res != 0:
+            abs_res = abs(res)
+        else:
+            raise ValueError(f"Wrong coordinates. Longitude {lon_1}, {lon_2}"
+                             f"and latitude {lat_1}, {lat_2} of first two points are identical.")
+        return abs_res
+
     @staticmethod
     def __generate_boundary_coordinates(boundary_values: dict) -> dict:
         for key, value in boundary_values.items():
-            value_check = value * 100
-            if value_check % 5 == 0 and value_check % 10 != 0:
-                formatted_value = int(value * 1000) if "min" in key else int(value * 1000 + 1)
-                boundary_values[key] = formatted_value
-            else:
-                raise ValueError("Coordinate format must be: XX.X5. Actual value: {}".format(value))
+            # TODO add codnitions
+            # value_check = value * 100
+            # if value_check % 5 == 0 and value_check % 10 != 0:
+            formatted_value = int(value * 1000) if "min" in key else int(value * 1000)
+            boundary_values[key] = formatted_value
+            # else:
+            #     raise ValueError("Coordinate format must be: XX.X5. Actual value: {}".format(value))
         return boundary_values
 
-    def __generate_possible_coordinates(self) -> Tuple[list, list]:
-        possible_lat = [x / 1000 for x in range(self.boundary_values["lat_min"],
-                                                self.boundary_values["lat_max"],
-                                                int(self.grid_resolution_degree * 1000))]
-        possible_lon = [x / 1000 for x in range(self.boundary_values["lon_min"],
-                                                self.boundary_values["lon_max"],
-                                                int(self.grid_resolution_degree * 1000))]
-        return possible_lat, possible_lon
+    def __generate_possible_coordinates(self):
+        possible_coords = [[x / self.multiplifier for x in range(self.boundary_values[coord + "_min"],
+                           self.boundary_values[coord + "_max"] + 1,
+                           int(self.grid_resolution_degree * 1000))]
+                           for coord in ("lon", "lat")]
+        return possible_coords
 
     def slice_data_by_coordinates(self):
         for row in self.raw_data:
-            lat, lon = row[:2]
-            if lat in self.possible_lat and lon in self.possible_lon:
+            lon, lat = row[:2]
+            if lon in self.possible_lon and lat in self.possible_lat:
                 self.sliced_data.append(row)
         self.__fill_data_to_array_shape()
 
     def __fill_data_to_array_shape(self):
-        for lat in self.possible_lat:
-            for lon in self.possible_lon:
-                if [lat, lon] not in self.coordinates:
-                    self.sliced_data.append((lat, lon, 0))
+        for lon in self.possible_lon:
+            for lat in self.possible_lat:
+                if [lon, lat] not in self.coordinates:
+                    self.sliced_data.append((lon, lat, 0))
 
     def sort_data(self) -> None:
         """
@@ -62,27 +73,23 @@ class Interpolator:
 
     def zoom_values(self, zoom_value: int, order: int=3):
         values_list = [row[2] for row in self.sliced_data]
-        values_array = np.array(values_list).reshape(len(self.possible_lat), len(self.possible_lon))
+        values_array = np.array(values_list).reshape(len(self.possible_lon), len(self.possible_lat))
         zoomed = ndimage.zoom(values_array, zoom_value, order=order)
         flatten = zoomed.flatten()
         return flatten
 
     def zoom_coordinates(self, zoom_value: int):
         coords_coeff = int(self.grid_resolution_degree / zoom_value / 2 * 1000) * (zoom_value - 1)
-        final_lat_iterable = [x for x in range(self.boundary_values["lat_min"] - coords_coeff,
-                                               self.boundary_values["lat_max"] + coords_coeff,
-                                               int(100 / zoom_value))]
-
-        final_lon_iterable = [x for x in range(self.boundary_values["lon_min"] - coords_coeff,
-                                               self.boundary_values["lon_max"] + coords_coeff,
-                                               int(100 / zoom_value))]
+        final_lat_iterable, final_lon_iterable = \
+            ([x / self.multiplifier for x in range(self.boundary_values[coord + "_min"] - coords_coeff,
+                                                   self.boundary_values[coord + "_max"] + coords_coeff + 1,
+                                                   int(self.multiplifier / zoom_value))]
+             for coord in ["lat", "lon"])
         final_coords = []
-        for num_lat in reversed(final_lat_iterable):
-            lat = num_lat / 1000
-            for num_lon in final_lon_iterable:
-                lon = num_lon / 1000
-                if (lat, lon) not in final_coords:
-                    final_coords.append((lat, lon))
+        for lon in reversed(final_lon_iterable):  # used reversed to have data order SE -> NW
+            for lat in final_lat_iterable:
+                if (lon, lat) not in final_coords:
+                    final_coords.append((lon, lat))
         return final_coords
 
     def interpolate(self, zoom_value: int, order: int) -> None:
@@ -95,7 +102,6 @@ class Interpolator:
         features = []
         values = []
         coeff = self.grid_resolution_degree / zoom_value
-
         data_for_heatmap = []
         for index, (lat, lon) in enumerate(zoomed_coordinates):
             data_for_heatmap.append((lat, lon, zoomed_values[index]))
@@ -110,6 +116,7 @@ class Interpolator:
             values.append((index, value))
         collection = FeatureCollection(features)
         self.create_files(collection, values, data_for_heatmap)
+        # TODO do not draw choropleth if value=0
 
     @staticmethod
     def generate_square_coordinates(lat: str, lon: str, coeff) -> list:
