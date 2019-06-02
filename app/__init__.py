@@ -4,7 +4,9 @@ from flask_bootstrap import Bootstrap
 from numpy import mean
 import os
 from .home import home as home_blueprint
+from .data_center.selection import data_center as data_center_blueprint
 from app.home.views import generate_map_by_coordinates, generate_map_by_country
+
 
 
 def create_app():
@@ -14,6 +16,6 @@ def create_app():
     app.config['SECRET_KEY'] = SECRET_KEY
     Bootstrap(app)
     app.register_blueprint(home_blueprint)
-
+    app.register_blueprint(data_center_blueprint)
     return app
 
