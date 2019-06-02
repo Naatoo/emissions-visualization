@@ -1,0 +1,14 @@
+{% import "bootstrap/utils.html" as utils %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends 'base.html' %}
+
+{% block main %}
+<header>
+    <div class="left">
+        <p>{% block header %}{% endblock %}</p>
+    </div>
+    <div class="right">
+        {% block content %}{% endblock %}
+    </div>
+</header>
+{% endblock %}
