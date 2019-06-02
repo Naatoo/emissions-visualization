@@ -27,8 +27,6 @@ class MapForm(FlaskForm):
             'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
             'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn']], default="Oranges")
     submit = SubmitField('Refresh')
-    load_countries()
-
     # TODO: validators
 
 

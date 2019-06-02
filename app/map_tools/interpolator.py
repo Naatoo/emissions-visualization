@@ -121,7 +121,7 @@ class Interpolator:
         final_lon_iterable, final_lat_iterable = \
             ([x / self.multiplifier for x in range(self.boundary_values[coord + "_min"] - coords_coeff,
                                                    self.boundary_values[coord + "_max"] + coords_coeff + 1,
-                                                   int(100 / zoom_value))]
+                                                   int(self.multiplifier / zoom_value))]
              for coord in ["lon", "lat"])
         final_coords = []
         for lon in reversed(final_lon_iterable):  # used reversed to have data order SE -> NW
