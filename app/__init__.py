@@ -4,11 +4,11 @@ from flask_bootstrap import Bootstrap
 from numpy import mean
 import os
 from .home import home as home_blueprint
-from app.home.views import generate_map
+from app.home.views import generate_map_by_coordinates, generate_map_by_country
 
 
 def create_app():
-    generate_map()
+    generate_map_by_country()
     app = Flask(__name__)
     SECRET_KEY = os.urandom(32)
     app.config['SECRET_KEY'] = SECRET_KEY

@@ -5,18 +5,25 @@ import scipy.ndimage as ndimage
 from geojson import Polygon, Feature, FeatureCollection
 from typing import List, Tuple
 
-from app.tools.paths import PM10_CSV_FILE, PM10_JSON_FILE
+from app.tools.paths import PM10_CSV_FILE, PM10_JSON_FILE, BOUNDING_BOXES_JSON
 import itertools
+import reverse_geocode
+import json
+from decimal import Decimal
+
 
 
 class Interpolator:
 
-    def __init__(self, raw_data: List[tuple], coordinates: List[tuple], boundary_values) -> None:
+    def __init__(self, raw_data: List[tuple], coordinates: List[tuple], boundary_values=None, country_code=None) -> None:
         self.raw_data = raw_data
         self.coordinates = coordinates
         self.multiplifier = 1000
+        self.country_code = country_code
         self.grid_resolution_degree = self.__generate_grid_resolution_degree()
+
         self.boundary_values = self.__generate_boundary_coordinates(boundary_values)
+
         self.possible_lon, self.possible_lat = self.__generate_possible_coordinates()
 
         self.sliced_data = []
@@ -32,16 +39,45 @@ class Interpolator:
                              f"and latitude {lat_1}, {lat_2} of first two points are identical.")
         return abs_res
 
+    def __get_lon_lat_format(self):
+        lon_format, lat_format = set(), set()
+        for lon, lat, _ in self.raw_data:
+            lon_format.add(abs(Decimal(str(lon)) % 1))
+            lat_format.add(abs(Decimal(str(lat)) % 1))
+        return ([float(x) for x in coord_type] for coord_type in (lon_format, lat_format))
+        # return lon_format, lat_format
+
     @staticmethod
-    def __generate_boundary_coordinates(boundary_values: dict) -> dict:
-        for key, value in boundary_values.items():
-            # TODO add codnitions
-            # value_check = value * 100
-            # if value_check % 5 == 0 and value_check % 10 != 0:
-            formatted_value = int(value * 1000) if "min" in key else int(value * 1000)
-            boundary_values[key] = formatted_value
-            # else:
-            #     raise ValueError("Coordinate format must be: XX.X5. Actual value: {}".format(value))
+    def find_nearest(array, value):
+        n = [abs(i - value) for i in array]
+        idx = n.index(min(n))
+        return array[idx]
+
+    def __generate_boundary_coordinates(self, boundary_values: dict) -> dict:
+        # TODO add codnitions
+        # value_check = value * 100
+        # if value_check % 5 == 0 and value_check % 10 != 0:
+        if boundary_values:
+            for key, value in boundary_values.items():
+                formatted_value = int(value * 1000) if "min" in key else int(value * 1000)
+                boundary_values[key] = formatted_value
+        elif self.country_code:
+            boundary_values = {}
+            lon_format, lat_format = self.__get_lon_lat_format()
+            with open(BOUNDING_BOXES_JSON) as file:
+                data = json.load(file)
+                for key, bound_coord in zip(("lon_min", "lat_min", "lon_max", "lat_max"), data[self.country_code][1]):
+                    sign = -1 if "min" in key else 1
+                    format_iterable = lon_format if "lon" in key else lat_format
+                    coord_int = int(bound_coord) + sign
+                    possible_coords = [coord_int + pos if coord_int > 0 else coord_int - pos for pos in format_iterable]
+                    final_value = self.find_nearest(possible_coords, bound_coord)
+                    boundary_values[key] = int(final_value * 1000)
+
+        else:
+            raise ValueError("Boundary coordinates or country code must be provided")
+        # else:
+        #     raise ValueError("Coordinate format must be: XX.X5. Actual value: {}".format(value))
         return boundary_values
 
     def __generate_possible_coordinates(self):
@@ -55,6 +91,8 @@ class Interpolator:
         for row in self.raw_data:
             lon, lat = row[:2]
             if lon in self.possible_lon and lat in self.possible_lat:
+                if row in self.sliced_data:
+                    print(row)
                 self.sliced_data.append(row)
         self.__fill_data_to_array_shape()
 
@@ -80,11 +118,11 @@ class Interpolator:
 
     def zoom_coordinates(self, zoom_value: int):
         coords_coeff = int(self.grid_resolution_degree / zoom_value / 2 * 1000) * (zoom_value - 1)
-        final_lat_iterable, final_lon_iterable = \
+        final_lon_iterable, final_lat_iterable = \
             ([x / self.multiplifier for x in range(self.boundary_values[coord + "_min"] - coords_coeff,
                                                    self.boundary_values[coord + "_max"] + coords_coeff + 1,
-                                                   int(self.multiplifier / zoom_value))]
-             for coord in ["lat", "lon"])
+                                                   int(100 / zoom_value))]
+             for coord in ["lon", "lat"])
         final_coords = []
         for lon in reversed(final_lon_iterable):  # used reversed to have data order SE -> NW
             for lat in final_lat_iterable:
@@ -103,17 +141,18 @@ class Interpolator:
         values = []
         coeff = self.grid_resolution_degree / zoom_value
         data_for_heatmap = []
-        for index, (lat, lon) in enumerate(zoomed_coordinates):
-            data_for_heatmap.append((lat, lon, zoomed_values[index]))
-            coords = self.generate_square_coordinates(str(lat), str(lon), coeff=coeff)
-            value = zoomed_values[index]
-            feature = Feature(
-                geometry=Polygon(coords),
-                properties={
-                    "id": index
-                })
-            features.append(feature)
-            values.append((index, value))
+        for index, (lon, lat) in enumerate(zoomed_coordinates):
+            if reverse_geocode.get((lat, lon))["country_code"] == self.country_code:
+                data_for_heatmap.append((lon, lat, zoomed_values[index]))
+                coords = self.generate_square_coordinates(str(lon), str(lat), coeff=coeff)
+                value = zoomed_values[index]
+                feature = Feature(
+                    geometry=Polygon(coords),
+                    properties={
+                        "id": index
+                    })
+                features.append(feature)
+                values.append((index, value))
         collection = FeatureCollection(features)
         self.create_files(collection, values, data_for_heatmap)
         # TODO do not draw choropleth if value=0
