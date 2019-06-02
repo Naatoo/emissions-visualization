@@ -8,27 +8,19 @@ class CSVFileParser:
         self.data = self._parse_data_file(kwargs)
 
     def _parse_data_file(self, chosen_criteria: dict) -> List[tuple]:
-        country = self.__validate_country_criteria(chosen_criteria)
-        data = []
+        # country = self.__validate_country_criteria(chosen_criteria)
+        data = {}
         with open(self.file_name) as file:
             for line in file.readlines():
                 line_data = line.strip().split(";")
-                if chosen_criteria.get("country") == line_data[0]:
+                # if chosen_criteria.get("country") == line_data[0]:
                     # (LAT, LON, VALUE)
-                    data.append([float(x) for x in (*line_data[4:6], line_data[-1])])
-        if not data:
-            raise ValueError("Unknown country code: {}".format(country))
-        return data
+                data[tuple(float(x) for x in line_data[4:6])] = float(line_data[-1])
+        # if not data:
+        #     raise ValueError("Unknown country code: {}".format(country))
+        final_data = [[*key, value] for key, value in data.items()]
+        return final_data
 
-    @staticmethod
-    def __validate_country_criteria(user_criteria: dict) -> str:
-        country_code = user_criteria.get("country", "")
-        if len(country_code) == 2 and (letter.isupper() for letter in country_code):
-            country = country_code
-        else:
-            raise ValueError("Wrong country code format: {}".format(country_code))
-        # TODO lat, lon
-        return country
 
     @property
     def coordinates(self):

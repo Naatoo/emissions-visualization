@@ -9,6 +9,10 @@ class ExcelFileParser:
         self.file_name = file_name
         self.data = self._parse_data_file(kwargs)
 
+    def __get_file(self):
+        file = pandas.ExcelFile(self.file_name)
+        return file
+
     def _parse_data_file(self, chosen_criteria: dict) -> List[tuple]:
         data = []
         fields = 0, 1, 7
@@ -26,3 +30,8 @@ class ExcelFileParser:
         """
         coordinates = [row[:2] for row in self.data]
         return coordinates
+
+    @property
+    def sheet_names(self):
+        file = self.__get_file()
+        return file.sheet_names

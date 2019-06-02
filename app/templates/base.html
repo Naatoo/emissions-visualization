@@ -16,17 +16,16 @@
             </button>
             <a class="navbar-brand topnav">Emissions</a>
         </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{{ url_for('home.map_by_coordinates') }}">Map by coordinates</a></li>
+                <li><a href="{{ url_for('home.map_by_country') }}">Map by country</a></li>
+            </ul>
+        </div>
     </div>
 </nav>
 <section class="content">
-    <header>
-        <div class="left">
-            <p>{% block header %}{% endblock %}</p>
-        </div>
-        <div class="right">
-            {% block content %}{% endblock %}
-        </div>
-    </header>
+    {% block main %}{% endblock %}
 </section>
 
 
