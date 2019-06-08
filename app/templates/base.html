@@ -20,6 +20,7 @@
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="{{ url_for('home.map_by_coordinates') }}">Map by coordinates</a></li>
                 <li><a href="{{ url_for('home.map_by_country') }}">Map by country</a></li>
+                <li><a href="{{ url_for('data_center.choose_data') }}">Choose data</a></li>
             </ul>
         </div>
     </div>
@@ -27,5 +28,3 @@
 <section class="content">
     {% block main %}{% endblock %}
 </section>
-
-

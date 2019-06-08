@@ -7,7 +7,5 @@ class DataSourceForm(FlaskForm):
     """
     Form for users to add new energy bill
     """
-    source = SelectField('Data source', validators=[DataRequired()], choices=[("emep", "EMEP"), ("another", "Another")],
-                         default="emep")
     # TODO add more fields
-    submit = SubmitField('Refresh')
+    submit = SubmitField('Submit')
