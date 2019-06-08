@@ -12,7 +12,6 @@ import json
 from decimal import Decimal
 
 
-
 class Interpolator:
 
     def __init__(self, raw_data: List[tuple], coordinates: List[tuple], boundary_values=None, country_code=None) -> None:
@@ -99,7 +98,7 @@ class Interpolator:
     def __fill_data_to_array_shape(self):
         for lon in self.possible_lon:
             for lat in self.possible_lat:
-                if [lon, lat] not in self.coordinates:
+                if (lon, lat) not in self.coordinates:
                     self.sliced_data.append((lon, lat, 0))
 
     def sort_data(self) -> None:
@@ -108,6 +107,11 @@ class Interpolator:
         :return:
         """
         self.sliced_data.sort(key=lambda x: (-x[0], x[1]))
+
+    @staticmethod
+    def __get_exponent(number):
+        (sign, digits, exponent) = Decimal(number).as_tuple()
+        return len(digits) + exponent - 1
 
     def zoom_values(self, zoom_value: int, order: int=3):
         values_list = [row[2] for row in self.sliced_data]
@@ -118,10 +122,12 @@ class Interpolator:
 
     def zoom_coordinates(self, zoom_value: int):
         coords_coeff = int(self.grid_resolution_degree / zoom_value / 2 * 1000) * (zoom_value - 1)
+        exponent = self.__get_exponent(self.grid_resolution_degree)
         final_lon_iterable, final_lat_iterable = \
             ([x / self.multiplifier for x in range(self.boundary_values[coord + "_min"] - coords_coeff,
                                                    self.boundary_values[coord + "_max"] + coords_coeff + 1,
-                                                   int(self.multiplifier / zoom_value))]
+                                                   int(self.multiplifier * 10 ** exponent / zoom_value)
+                                                   if exponent != 0 else int(self.multiplifier / zoom_value))]
              for coord in ["lon", "lat"])
         final_coords = []
         for lon in reversed(final_lon_iterable):  # used reversed to have data order SE -> NW

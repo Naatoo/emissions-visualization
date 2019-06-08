@@ -1,29 +1,32 @@
+from flask import current_app as app
 from flask import render_template, redirect, url_for
 from numpy import mean
-import pandas
 
-from app.map_tools.csv_parser import CSVFileParser
-from app.map_tools.excel_parser import ExcelFileParser
-from app.map_tools.interpolator import Interpolator
-from app.map_tools.interactive_map import InteractiveMap
+import pandas
 
 from app.home import home
 from app.home.map_zoom_form import LatLonForm, CountryForm
-
-from app.tools.paths import PM10_RAW_FILE
-from app.tools.paths import EMISSION_EXCEL_FILE, COUNTRIES_CENTROIDS_CSV
+from app.map_tools.interactive_map import InteractiveMap
+from app.map_tools.interpolator import Interpolator
+from app.models.emission_data import DataValues, DataInfo
+from app.tools.paths import COUNTRIES_CENTROIDS_CSV
 
 
 def create_csv_json_files(zoom_value: int, boundaries: dict=None, country_code: str= None) -> None:
     order = 5
-    # source_file_name = PM10_RAW_FILE
-    source_file_name = EMISSION_EXCEL_FILE
-    target_file_name = "PM10_zoomed"
-    # country_code = "PL"
-    # parser = CSVFileParser(source_file_name, **{"country": country_code})
-    parser = ExcelFileParser(source_file_name, **{"country": country_code})
-    interpolator = Interpolator(parser.data, parser.coordinates, boundary_values=boundaries, country_code=country_code)
+    row_data = get_data_from_database()
+    interpolator = Interpolator(row_data, [(row[:2]) for row in row_data], boundary_values=boundaries, country_code=country_code)
     interpolator.interpolate(zoom_value=zoom_value, order=order)
+
+
+def get_data_from_database():
+    dataset_hash = app.config.get('CURRENT_DATA_HASH') # TODO handle not dataset_hash on the startup
+    if not dataset_hash:
+        dataset_hash = DataInfo.query.all()[0].dataset_hash
+    row_data = []
+    for row in DataValues.query.filter_by(dataset_hash=dataset_hash):
+        row_data.append((row.lon, row.lat, row.value))
+    return row_data
 
 
 def generate_map_by_coordinates(form=None):
