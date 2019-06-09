@@ -20,8 +20,8 @@ class MapForm(FlaskForm):
     interpolation = SelectField('Interpolation', validators=[DataRequired()],
                                 choices=[("1", "No interpolation"), ("2", "x2"), ("3", "x3"),
                                          ("5", "x5"), ("10", "x10"), ("25", "x25")], default=2)
-    line_opacity = FloatField('Line opacity', validators=[DataRequired()], default=0)
-    fill_opacity = FloatField('Fill opacity', validators=[DataRequired()], default=0.7)
+    line_opacity = SelectField('Line opacity', validators=[DataRequired()], choices=[((round(val * 0.1, 1)), round((val * 0.1), 1)) for val in range(11)])
+    fill_opacity = SelectField('Fill opacity', validators=[DataRequired()], choices=[((round(val * 0.1, 1)), round((val * 0.1), 1)) for val in range(11)], default=0.7)
     color = SelectField('Colors', choices=[(color, color) for color in [
             'Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
             'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',

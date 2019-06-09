@@ -5,7 +5,8 @@ import os
 from .home import home as home_blueprint
 from .data_center.selection import data_center_select as data_center_select_blueprint
 from .data_center.upload import data_center_upload as data_center_upload_blueprint
-from app.home.views import generate_map_by_coordinates, generate_map_by_country
+from .map_center import map_center as map_center_blueprint
+from app.map_center.views import generate_map_by_coordinates, generate_map_by_country
 from app.database.database import db
 
 from .data_center.loader.excel_parser import ExcelFileParser
@@ -27,6 +28,7 @@ def create_app():
     app.register_blueprint(home_blueprint)
     app.register_blueprint(data_center_select_blueprint)
     app.register_blueprint(data_center_upload_blueprint)
+    app.register_blueprint(map_center_blueprint)
     return app
 
 

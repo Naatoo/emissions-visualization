@@ -4,7 +4,6 @@ Austria,AT
 Azerbaijan,AZ
 Belarus,BY
 Belgium,BE
-Bosnia and Herzegovina,BA
 Bulgaria,BG
 Croatia,HR
 Cyprus,CY
