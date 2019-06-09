@@ -20,3 +20,5 @@ COUNTRIES_CENTROIDS_CSV = os.path.join(RAW_DATA_DIR, "countries_centroids.csv")
 
 DATABASE_DIR = os.path.join(MAIN_DIR, "database/")
 DATABASE_FILE = os.path.join(DATABASE_DIR, "data.db")
+
+TEMP_DIR = os.path.join(MAIN_DIR, "temp/")
