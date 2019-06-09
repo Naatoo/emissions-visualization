@@ -14,7 +14,7 @@ class DataValues(db.Model):
 class DataInfo(db.Model):
     dataset_hash = db.Column(db.Unicode, primary_key=True)
     physical_quantity = db.Column(db.String)
-    name = db.Column(db.String)
+    name = db.Column(db.String, unique=True)
     year = db.Column(db.Integer)
     __table_args__ = (UniqueConstraint('physical_quantity', 'name', 'year', name='dataset_info'),
                       )
