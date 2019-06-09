@@ -3,7 +3,8 @@ from flask import Flask
 from flask_bootstrap import Bootstrap
 import os
 from .home import home as home_blueprint
-from .data_center.selection import data_center as data_center_blueprint
+from .data_center.selection import data_center_select as data_center_select_blueprint
+from .data_center.upload import data_center_upload as data_center_upload_blueprint
 from app.home.views import generate_map_by_coordinates, generate_map_by_country
 from app.database.database import db
 
@@ -24,7 +25,8 @@ def create_app():
     Bootstrap(app)
     db.init_app(app)
     app.register_blueprint(home_blueprint)
-    app.register_blueprint(data_center_blueprint)
+    app.register_blueprint(data_center_select_blueprint)
+    app.register_blueprint(data_center_upload_blueprint)
     return app
 
 
