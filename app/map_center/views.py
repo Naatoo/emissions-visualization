@@ -4,6 +4,7 @@ from numpy import mean
 
 import pandas
 
+from app.database.queries import get_selected_data_str
 from app.map_center import map_center
 from app.map_center.forms import LatLonForm, CountryForm
 from app.map_center.interactive_map import InteractiveMap
@@ -104,7 +105,8 @@ def map_by_coordinates():
     if form.is_submitted():
         generate_map_by_coordinates(form)
         return redirect(url_for("map_center.map_by_coordinates"))
-    return render_template("map_by_coordinates.html", form=form)
+    selected_data_str = get_selected_data_str()
+    return render_template("map_by_coordinates.html", form=form, selected_data_str=selected_data_str)
 
 
 @map_center.route('/map_by_country', methods=['GET', 'POST'])
@@ -113,4 +115,5 @@ def map_by_country():
     if form.is_submitted():
         generate_map_by_country(form)
         return redirect(url_for("map_center.map_by_country"))
-    return render_template("map_by_country.html", form=form)
+    selected_data_str = get_selected_data_str()
+    return render_template("map_by_country.html", form=form, selected_data_str=selected_data_str)

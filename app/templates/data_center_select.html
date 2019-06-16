@@ -8,13 +8,9 @@
 .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;}
 .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#f0f0f0;}
 .tg .tg-0lax{text-align:left;vertical-align:top}
-
-
-
-
-
-
-
+tr.selected td{
+    background-color: #7EFEB8;
+}
 </style>
 <table class="tg">
     <caption style="font-size:25px">Available data:</caption>
@@ -22,14 +18,15 @@
         <th class="tg-0lax">Name</th>
         <th class="tg-0lax">Year</th>
         <th class="tg-0lax">Physical quantity</th>
-        <th class="tg-0lax">Choose</th>
+        <th class="tg-0lax">Select</th>
+        <th class="tg-0lax">Delete</th>
     </tr>
     {% for row in rows %}
 
-    <tr>
-        <td>{{ row[0] }}</td>
-        <td>{{ row[1] }}</td>
-        <td>{{ row[2] }}</td>
+    <tr {% if row[3]==current_hash %} class="selected"  {% endif %}>
+        <td >{{ row[0] }}</td>
+        <td >{{ row[1] }}</td>
+        <td >{{ row[2] }}</td>
         <td>
             <form method="post" action="{{ url_for('data_center_select.select', value=row[3]) }}">
                 <button type="submit">Select</button>
@@ -45,5 +42,4 @@
 
 </table>
 
-<div>{{ form.submit() }}</div>
 {% endblock %}
