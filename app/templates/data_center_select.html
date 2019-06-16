@@ -12,8 +12,10 @@
 
 
 
+
+
+
 </style>
-<form method="POST">
 <table class="tg">
     <caption style="font-size:25px">Available data:</caption>
     <tr>
@@ -25,21 +27,23 @@
     {% for row in rows %}
 
     <tr>
-        <td>{{ row[0] }}</a></td>
+        <td>{{ row[0] }}</td>
         <td>{{ row[1] }}</td>
-        <td>{{ row[2] }}</a></td>
+        <td>{{ row[2] }}</td>
         <td>
-            <div class="custom-control custom-radio">
-                <input type="radio" class="custom-control-input" id="defaultUnchecked" name="chosen_data"
-                       value="{{ row[3] }}">
-
-            </div>
+            <form method="post" action="{{ url_for('data_center_select.select', value=row[3]) }}">
+                <button type="submit">Select</button>
+            </form>
+        <td>
+            <form method="post" action="{{ url_for('data_center_select.delete', value=row[3]) }}">
+                <button type="submit">Delete</button>
+            </form>
         </td>
+
     </tr>
     {% endfor %}
 
 </table>
 
-            <div>{{ form.submit() }}</div>
-        </form>
+<div>{{ form.submit() }}</div>
 {% endblock %}

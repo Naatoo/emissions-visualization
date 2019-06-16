@@ -24,3 +24,13 @@ def insert_new_file_data(**kwargs):
                                   ))
         db.session.flush()
     db.session.commit()
+
+
+def delete_data(dataset_hash):
+    db.session.delete(DataInfo.query.filter_by(dataset_hash=dataset_hash).one())
+    db.session.commit()
+    for row in DataValues.query.filter_by(dataset_hash=dataset_hash).all():
+        db.session.delete(row)
+        db.session.flush()
+    db.session.commit()
+
