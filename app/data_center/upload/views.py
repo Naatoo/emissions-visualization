@@ -1,10 +1,9 @@
 from flask import render_template, redirect, url_for, flash
-from flask import current_app as app
 from werkzeug.utils import secure_filename
 
 from app.data_center.upload import data_center_upload
 from app.data_center.upload.forms import DataUploadForm
-from app.database.queries import insert_new_file_data, get_data_metadata, get_selected_data_str
+from app.database.queries import insert_new_file_data, get_selected_data_str
 from app.tools.paths import TEMP_DIR
 
 

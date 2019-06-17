@@ -148,7 +148,7 @@ class Interpolator:
         coeff = self.grid_resolution_degree / zoom_value
         data_for_heatmap = []
         for index, (lon, lat) in enumerate(zoomed_coordinates):
-            if reverse_geocode.get((lat, lon))["country_code"] == self.country_code:
+            if reverse_geocode.get((lat, lon))["country_code"] == self.country_code or self.country_code is None:
                 data_for_heatmap.append((lon, lat, zoomed_values[index]))
                 coords = self.generate_square_coordinates(str(lon), str(lat), coeff=coeff)
                 value = zoomed_values[index]

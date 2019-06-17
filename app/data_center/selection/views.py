@@ -19,8 +19,6 @@ def choose_data():
 @data_center_select.route('/data_center/select/<string:value>', methods=['GET', 'POST'])
 def select(value):
     app.config['CURRENT_DATA_HASH'] = value
-    metadata = get_data_metadata(value)
-    # flash(f"SELECTED: Data {metadata.name} of {metadata.physical_quantity} from year {metadata.year}.")
     return redirect(url_for("data_center_select.choose_data"))
 
 
