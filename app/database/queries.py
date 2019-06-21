@@ -1,4 +1,5 @@
 import secrets
+from flask import current_app as app
 
 from app.database.database import db
 from app.models.emission_data import DataInfo, DataValues
@@ -24,3 +25,27 @@ def insert_new_file_data(**kwargs):
                                   ))
         db.session.flush()
     db.session.commit()
+
+
+def delete_data(dataset_hash):
+    db.session.delete(DataInfo.query.filter_by(dataset_hash=dataset_hash).one())
+    db.session.commit()
+    for row in DataValues.query.filter_by(dataset_hash=dataset_hash).all():
+        db.session.delete(row)
+        db.session.flush()
+    db.session.commit()
+
+
+def get_data_metadata(dataset_hash):
+    data = DataInfo.query.filter_by(dataset_hash=dataset_hash).one()
+    return data
+
+
+def get_selected_data_str():
+    dataset_hash = app.config.get('CURRENT_DATA_HASH')
+    if dataset_hash:
+        metadata = get_data_metadata(dataset_hash)
+        selected_data_str = f"{metadata.name}, {metadata.physical_quantity}, {metadata.year}"
+    else:
+        selected_data_str = None
+    return selected_data_str

@@ -14,7 +14,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand topnav">Emissions</a>
+            <a class="navbar-brand topnav">Selected data: {{ selected_data_str }}</a>
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
@@ -26,6 +26,13 @@
         </div>
     </div>
 </nav>
+<div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
 <section class="content">
     {% block main %}{% endblock %}
 </section>
