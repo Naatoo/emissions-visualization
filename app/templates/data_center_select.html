@@ -11,15 +11,50 @@
 tr.selected td{
     background-color: #7EFEB8;
 }
+
+table {
+  width: 100%;
+  border: 1px solid #000;
+}
+th.delete, th.select {
+  width: 8%
+}
+th.year {
+  width: 5%
+}
+th.physical-quantity {
+  width: 10%
+}
+th.name {
+  width: 60%;
+}
+button.confirm-delete {
+ width: 20%;
+ margin-left: 40%;
+ margin-right: 40%;
+ }
+
+
 </style>
+
+{% if delete_str %}
+<h4>
+{{ delete_str }}
+    <form method="post" action="{{ url_for('data_center_select.confirm_delete', value=delete_hash) }}">
+        <button class="confirm-delete" >Confirm delete</button>
+    </form>
+
+</h4>
+{% endif %}
+
 <table class="tg">
     <caption style="font-size:25px">Available data:</caption>
     <tr>
-        <th class="tg-0lax">Name</th>
-        <th class="tg-0lax">Year</th>
-        <th class="tg-0lax">Physical quantity</th>
-        <th class="tg-0lax">Select</th>
-        <th class="tg-0lax">Delete</th>
+        <th class="name">Name</th>
+        <th class="year">Year</th>
+        <th class="physical-quantity">Physical quantity</th>
+        <th class="select">Select</th>
+        <th class="delete">Delete</th>
     </tr>
     {% for row in rows %}
 
