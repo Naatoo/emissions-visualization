@@ -4,7 +4,8 @@ from flask_bootstrap import Bootstrap
 import os
 from .home import home as home_blueprint
 from .data_center.selection import data_center_select as data_center_select_blueprint
-from .data_center.upload import data_center_upload as data_center_upload_blueprint
+from .data_center.add_data import data_center_add_data as data_center_add_data_blueprint
+from .data_center.upload_file import data_center_upload_file as data_center_upload_file_blueprint
 from .map_center import map_center as map_center_blueprint
 from app.map_center.views import generate_map_by_coordinates, generate_map_by_country
 from app.database.database import db
@@ -12,7 +13,7 @@ from app.database.database import db
 from .data_center.loader.excel_parser import ExcelFileParser
 from .data_center.loader.csv_parser import CSVFileParser
 from app.tools.paths import EUROPE_EMISSION_PM10_2015_EXCEL_FILE, COUNTRIES_CENTROIDS_CSV, PM10_RAW_FILE
-from app.models.emission_data import DataValues, DataInfo
+from app.models.data_models import DataValues, DataInfo
 from app.tools.paths import DATABASE_FILE
 
 import secrets
@@ -27,7 +28,8 @@ def create_app():
     db.init_app(app)
     app.register_blueprint(home_blueprint)
     app.register_blueprint(data_center_select_blueprint)
-    app.register_blueprint(data_center_upload_blueprint)
+    app.register_blueprint(data_center_upload_file_blueprint)
+    app.register_blueprint(data_center_add_data_blueprint)
     app.register_blueprint(map_center_blueprint)
     return app
 
@@ -40,17 +42,20 @@ def setup_database(app):
 
 
 def insert_initial_europe_data():
-    dataset_hash = secrets.token_hex(nbytes=4)
+    dataset_hash = secrets.token_hex(nbytes=16)
+    name = "normal"
+    compound = 'PM10'
     physical_quantity = "concentration"
+    unit = 'µg/m3'
     year = 2015
-    name = "PM10 normal"
     parser = ExcelFileParser(file_name=EUROPE_EMISSION_PM10_2015_EXCEL_FILE)
-
     db.session.add(DataInfo(
         dataset_hash=dataset_hash,
+        name=name,
+        compound=compound,
         physical_quantity=physical_quantity,
+        unit=unit,
         year=year,
-        name=name
     ))
     db.session.commit()
     for (lon, lat, value) in parser.parse_data_file():
