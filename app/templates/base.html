@@ -21,15 +21,15 @@
                 <li><a href="{{ url_for('map_center.map_by_coordinates') }}">Map by coordinates</a></li>
                 <li><a href="{{ url_for('map_center.map_by_country') }}">Map by country</a></li>
                 <li><a href="{{ url_for('data_center_select.choose_data') }}">Choose data</a></li>
-                <li><a href="{{ url_for('data_center_upload.upload_data') }}">Upload data</a></li>
+                <li><a href="{{ url_for('data_center_upload_file.upload_file') }}">Upload file</a></li>
             </ul>
         </div>
     </div>
 </nav>
-<div class="container">
-    {% for message in get_flashed_messages() %}
-    <div class="alert alert-warning">
-        {{ message }}
+<div >
+    {% for message in get_flashed_messages(with_categories=True) %}
+    <div class="alert alert-{{ message[0] }}">
+        {{ message[1] }}
     </div>
     {% endfor %}
 </div>
