@@ -4,7 +4,8 @@
 
 {% block main %}
 <form method="POST" enctype="multipart/form-data">
-    <div class="form-group col-md-5">
+    <div class="form-row">
+    <div class="form-group col-md-6">
         <div class="form-row">
             <div class="form-group col-md-12">
                 <div class="form-group">
@@ -41,7 +42,34 @@
             </div>
         </div>
     </div>
+        <div class="form-group col-md-6">
+            <h3>Current file preview:</h3>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th width="10" scope="col">ID</th>
+                    <th width="50" scope="col">Longitude</th>
+                    <th width="50" scope="col">Latitude</th>
+                    <th scope="col">Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in preview_data %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    </td>
+
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </form>
+
 {% endblock %}
 
 
