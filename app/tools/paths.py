@@ -22,3 +22,4 @@ DATABASE_DIR = os.path.join(MAIN_DIR, "database/")
 DATABASE_FILE = os.path.join(DATABASE_DIR, "data.db")
 
 TEMP_DIR = os.path.join(MAIN_DIR, "temp/")
+UPLOADED_FILE = os.path.join(TEMP_DIR, "uploaded_file")

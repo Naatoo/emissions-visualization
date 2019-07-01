@@ -1,0 +1,84 @@
+{% import "bootstrap/utils.html" as utils %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends 'base.html' %}
+
+{% block main %}
+<form method="POST" enctype="multipart/form-data">
+    <div class="form-row">
+    <div class="form-group col-md-6">
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <div class="form-group">
+                    {{ form.name.label(for="name" )}}
+                    {{ form.name(class="form-control", id="name", placeholder="Name of this dataset")}}
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <div class="form-group">
+                    {{ form.compound.label(for="name" )}}
+                    {{ form.compound(class="form-control", id="compound", placeholder="e.g.: PM10, SOx")}}
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                    {{ form.physical_quantity.label(for="physical_quantity" )}}
+                    {{ form.physical_quantity(class="form-control", id="physical_quantity", placeholder="e.g.: Emission, Concentration")}}
+            </div>
+        </div>
+            <div class="form-group col-md-9">
+                {{ form.unit.label(for="unit" )}}
+                {{ form.unit(class="form-control", id="unit", placeholder="e.g. µg/m3, t")}}
+            </div>
+            <div class="form-group col-md-3">
+                {{ form.year.label(for="year" )}}
+                {{ form.year(class="form-control", id="year", placeholder="e.g. µg/m3, t")}}
+            </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </div>
+    </div>
+        <div class="form-group col-md-6">
+            <h3>Current file preview:</h3>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th width="10" scope="col">ID</th>
+                    <th width="50" scope="col">Longitude</th>
+                    <th width="50" scope="col">Latitude</th>
+                    <th scope="col">Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in preview_data %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    </td>
+
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+

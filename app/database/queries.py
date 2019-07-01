@@ -2,14 +2,14 @@ import secrets
 from flask import current_app as app
 
 from app.database.database import db
-from app.models.emission_data import DataInfo, DataValues
-from app.tools.paths import TEMP_DIR
+from app.models.data_models import DataInfo, DataValues
+from app.tools.paths import UPLOADED_FILE
 from app.data_center.loader.excel_parser import ExcelFileParser
 
 
 def insert_new_file_data(**kwargs):
-    dataset_hash = secrets.token_hex(nbytes=4)
-    parser = ExcelFileParser(file_name=TEMP_DIR + "uploaded_file")
+    dataset_hash = secrets.token_hex(nbytes=16)
+    parser = ExcelFileParser(UPLOADED_FILE)
     db.session.add(DataInfo(
         dataset_hash=dataset_hash,
         physical_quantity=kwargs["physical_quantity"],

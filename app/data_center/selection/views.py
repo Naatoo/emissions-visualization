@@ -3,7 +3,7 @@ from flask import current_app as app
 
 from app.data_center.selection import data_center_select
 from app.database.queries import delete_data, get_data_metadata, get_selected_data_str
-from app.models.emission_data import DataInfo
+from app.models.data_models import DataInfo
 
 
 @data_center_select.route('/data_center/select', methods=['GET', 'POST'])
@@ -41,7 +41,7 @@ def delete(value):
 def confirm_delete(value):
     # TODO set default data hash
     metadata = get_data_metadata(value)
-    flash(f"DELETED: Data {metadata.name} of {metadata.physical_quantity} from year {metadata.year}.")
+    flash(f"DELETED: Data {metadata.name} of {metadata.physical_quantity} from year {metadata.year}.", category='info')
     delete_data(value)
     if app.config.get('CURRENT_DATA_HASH') == value:
         del app.config['CURRENT_DATA_HASH']

@@ -9,7 +9,7 @@ from app.map_center import map_center
 from app.map_center.forms import LatLonForm, CountryForm
 from app.map_center.interactive_map import InteractiveMap
 from app.map_center.interpolator import Interpolator
-from app.models.emission_data import DataValues, DataInfo
+from app.models.data_models import DataValues, DataInfo
 from app.tools.paths import COUNTRIES_CENTROIDS_CSV
 
 
