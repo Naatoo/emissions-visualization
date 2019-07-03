@@ -36,6 +36,13 @@ def delete_data(dataset_hash):
     db.session.commit()
 
 
+def get_dataset(dataset_hash, rows_limit: int=None):
+    dataset = DataValues.query.filter_by(dataset_hash=dataset_hash)
+    if rows_limit:
+        dataset = dataset.limit(rows_limit)
+    return [(row.lon, row.lat, row.value) for row in dataset.all()]
+
+
 def get_data_metadata(dataset_hash):
     data = DataInfo.query.filter_by(dataset_hash=dataset_hash).one()
     return data
@@ -49,3 +56,7 @@ def get_selected_data_str():
     else:
         selected_data_str = None
     return selected_data_str
+
+
+def get_hash_of_first_dataset():
+    return DataInfo.query.all()[0].dataset_hash

@@ -7,10 +7,10 @@
 <div class="content-section">
     <div class="center">
         <form method="POST">
-            <div>{{ form.lon_min.label }}: {{ form.lon_min() }}</div>
-            <div>{{ form.lon_max.label }}: {{ form.lon_max() }}</div>
-            <div>{{ form.lat_min.label }}: {{ form.lat_min() }}</div>
-            <div>{{ form.lat_max.label }}: {{ form.lat_max() }}</div>
+            <div>{{ form.lon_min.label }}: {{ form.lon_min(step=steps["lon"]) }}</div>
+            <div>{{ form.lon_max.label }}: {{ form.lon_max(step=steps["lon"]) }}</div>
+            <div>{{ form.lat_min.label }}: {{ form.lat_min(step=steps["lat"]) }}</div>
+            <div>{{ form.lat_max.label }}: {{ form.lat_max(step=steps["lat"]) }}</div>
             <div>{{ form.interpolation.label }}: {{ form.interpolation() }}</div>
             <div>{{ form.line_opacity.label }}: {{ form.line_opacity() }}</div>
             <div>{{ form.fill_opacity.label }}: {{ form.fill_opacity() }}</div>
