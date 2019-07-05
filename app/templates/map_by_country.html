@@ -1,33 +1,13 @@
 {% import "bootstrap/utils.html" as utils %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% extends 'map_base.html' %}
-
-
-{% block header %}
-<div class="content-section">
-    <div class="center">
-        <form method="POST">
-            <div>{{ form.country.label }}: {{ form.country() }}</div>
-            <div>{{ form.interpolation.label }}: {{ form.interpolation() }}</div>
-            <div>{{ form.line_opacity.label }}: {{ form.line_opacity() }}</div>
-            <div>{{ form.fill_opacity.label }}: {{ form.fill_opacity() }}</div>
-            <div>{{ form.color.label }}: {{ form.color() }}</div>
-            <div>{{ form.submit.label }}: {{ form.submit() }}</div>
-        </form>
-    </div>
-</div>
-{% endblock %}
-
-
 {% block content %}
-{{ the_div|safe }}
-<div class="content-section">
-    <div class="center">
-        <iframe frameborder='0' noresize='noresize'
-                style='position: absolute; background: transparent; width: 60%; height: 70%;' src="/map_render"
-                frameborder="0"></iframe>
+<div class="form-row">
+    <div class="form-group col-md-12">
+        <div class="form-group">
+            {{ form.country.label(for="country" )}}
+            {{ form.country(class="form-control", id="country")}}
+        </div>
     </div>
 </div>
-
-{{ the_script|safe }}
 {% endblock %}
