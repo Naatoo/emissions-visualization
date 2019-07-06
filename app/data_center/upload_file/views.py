@@ -20,7 +20,7 @@ def upload_file():
             correct = False
             error_msg = f"{filename} has other extension then possible: {possible_extensions}"
         if correct:
-            return redirect(url_for("data_center_add_data.add_data"))
+            return redirect(url_for("data_center_add_data.add_data", file_type=form.file_type.data))
         else:
             flash(error_msg, category="danger")
             return render_template("data_center_upload_file.html", form=form, selected_data_str=get_selected_data_str())

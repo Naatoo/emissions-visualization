@@ -8,4 +8,6 @@ class UploadFileForm(FlaskForm):
     Form for uploading a new file
     """
     file = FileField(validators=[DataRequired()])
+    file_type = SelectField("File type", validators=[DataRequired()],
+                            choices=[("xlsx", "Excel file"), ("emep", "EMEP txt file")], default="xlsx")
     submit = SubmitField('Upload')

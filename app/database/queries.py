@@ -3,13 +3,10 @@ from flask import current_app as app
 
 from app.database.database import db
 from app.models.data_models import DataInfo, DataValues
-from app.tools.paths import UPLOADED_FILE
-from app.data_center.loader.excel_parser import ExcelFileParser
 
 
-def insert_new_file_data(**kwargs):
+def insert_new_file_data(parser, **kwargs):
     dataset_hash = secrets.token_hex(nbytes=16)
-    parser = ExcelFileParser(UPLOADED_FILE)
     db.session.add(DataInfo(
         dataset_hash=dataset_hash,
         physical_quantity=kwargs["physical_quantity"],
@@ -17,7 +14,7 @@ def insert_new_file_data(**kwargs):
         name=kwargs["name"]
     ))
     db.session.commit()
-    for (lon, lat, value) in parser.parse_data_file():
+    for (lon, lat, value) in parser.rows_generator():
         db.session.add(DataValues(dataset_hash=dataset_hash,
                                   lon=lon,
                                   lat=lat,

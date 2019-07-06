@@ -4,17 +4,30 @@
 
 {% block main %}
 <form method="POST" enctype="multipart/form-data">
-    <div class="form-group col-md-12">
-        <div class="custom-file">
-            {{ form.file.label }}
-            {{ form.file }}
+    <div class="form-group col-md-4">
+        <div class="form-group col-md-12">
+                {{ form.file.label(for="file" ) }}
+                {{ form.file(class="form-control", id="file") }}
+
         </div>
-    </div>
-    <div class="form-group col-md-6">
-        {{ form.submit(class="btn btn-primary") }}
+        <div class="form-group col-md-12">
+            <div class="form-group">
+                {{ form.file_type.label(for="file_type" )}}
+                {{ form.file_type(class="form-control", id="file_type")}}
+            </div>
+        </div>
+        <div class="form-group col-md-6">
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </div>
     </div>
 </form>
 
-<h4>Sample format of xlsx data:</h4>
-<img src="{{url_for('static', filename='images/xlsx_format_preview.png')}}">
+
+<!--TODO refactor theses samples into seperate 'Info' page-->
+<h4 align="left">Sample format of Emep Txt data:</h4>
+<img align="left" src="{{url_for('static', filename='images/emep_txt_format_preview.png')}}">
+<h4 align="right">Sample format of xlsx data:</h4>
+<img align="right" src="{{url_for('static', filename='images/xlsx_format_preview.png')}}">
 {% endblock %}

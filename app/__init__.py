@@ -11,7 +11,7 @@ from app.map_center.views import generate_map_by_coordinates, generate_map_by_co
 from app.database.database import db
 
 from .data_center.loader.excel_parser import ExcelFileParser
-from .data_center.loader.csv_parser import CSVFileParser
+from .data_center.loader.emep_txt_parser import EmepTxtFileParser
 from app.tools.paths import EUROPE_EMISSION_PM10_2015_EXCEL_FILE, COUNTRIES_CENTROIDS_CSV, PM10_RAW_FILE
 from app.models.data_models import DataValues, DataInfo
 from app.tools.paths import DATABASE_FILE
@@ -73,7 +73,7 @@ def insert_initial_emep_data():
     physical_quantity = "emission"
     year = 2015
     name = "PM10 yearly"
-    parser = CSVFileParser(file_name=PM10_RAW_FILE)
+    parser = EmepTxtFileParser(file_name=PM10_RAW_FILE)
 
     db.session.add(DataInfo(
         dataset_hash=dataset_hash,
