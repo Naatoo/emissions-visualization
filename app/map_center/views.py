@@ -4,30 +4,22 @@ from numpy import mean
 
 import pandas
 
-from app.database.queries import get_selected_data_str
+from app.database.queries import get_selected_data_str, get_dataset, get_hash_of_first_dataset
 from app.map_center import map_center
 from app.map_center.forms import LatLonForm, CountryForm
 from app.map_center.interactive_map import InteractiveMap
 from app.map_center.interpolator import Interpolator
-from app.models.data_models import DataValues, DataInfo
+from app.map_center.utils import generate_dataset_steps
 from app.tools.paths import COUNTRIES_CENTROIDS_CSV
 
 
 def prepare_data_for_map(zoom_value: int, boundaries: dict=None, country_code: str= None) -> None:
+    dataset_hash = app.config.get('CURRENT_DATA_HASH', get_hash_of_first_dataset())
+    # TODO handle not dataset_hash on the startup
+    row_data = get_dataset(dataset_hash)
     order = 5
-    row_data = get_data_from_database()
     interpolator = Interpolator(row_data, [(row[:2]) for row in row_data], boundary_values=boundaries, country_code=country_code)
     interpolator.interpolate(zoom_value=zoom_value, order=order)
-
-
-def get_data_from_database():
-    dataset_hash = app.config.get('CURRENT_DATA_HASH') # TODO handle not dataset_hash on the startup
-    if not dataset_hash:
-        dataset_hash = DataInfo.query.all()[0].dataset_hash
-    row_data = []
-    for row in DataValues.query.filter_by(dataset_hash=dataset_hash):
-        row_data.append((row.lon, row.lat, row.value))
-    return row_data
 
 
 def generate_map_by_coordinates(form=None):
@@ -106,7 +98,8 @@ def map_by_coordinates():
         generate_map_by_coordinates(form)
         return redirect(url_for("map_center.map_by_coordinates"))
     selected_data_str = get_selected_data_str()
-    return render_template("map_by_coordinates.html", form=form, selected_data_str=selected_data_str)
+    steps = generate_dataset_steps(app.config.get('CURRENT_DATA_HASH', get_hash_of_first_dataset()))
+    return render_template("map_by_coordinates.html", form=form, selected_data_str=selected_data_str, steps=steps)
 
 
 @map_center.route('/map_by_country', methods=['GET', 'POST'])

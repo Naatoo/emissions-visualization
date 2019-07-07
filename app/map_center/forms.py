@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, FloatField, SelectField, IntegerField, StringField
-from wtforms.fields.html5 import DateField
-from wtforms.validators import DataRequired
+from wtforms import SubmitField, SelectField, IntegerField, StringField
+from wtforms.fields.html5 import DecimalRangeField, DecimalField
+from wtforms.validators import DataRequired, NumberRange
 
 from app.tools.paths import COUNTRIES_TXT_FILE
 
@@ -31,10 +31,10 @@ class MapForm(FlaskForm):
 
 
 class LatLonForm(MapForm):
-    lon_min = FloatField('Longitude Start', validators=[DataRequired()], default=10)
-    lon_max = FloatField('Longitude End', validators=[DataRequired()], default=20)
-    lat_min = FloatField('Latitude Start', validators=[DataRequired()], default=40.9)
-    lat_max = FloatField('Latitude End', validators=[DataRequired()], default=50.9)
+    lon_max = DecimalField('Longitude End', validators=[DataRequired()], default=20)
+    lon_min = DecimalField('Longitude Start', validators=[DataRequired()], default=10)
+    lat_min = DecimalField('Latitude Start', validators=[DataRequired()], default=40.9)
+    lat_max = DecimalField('Latitude End', validators=[DataRequired()], default=40.9)
 
 
 class CountryForm(MapForm):
