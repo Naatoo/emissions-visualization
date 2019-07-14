@@ -3,10 +3,10 @@ import os
 import pandas as pd
 from selenium import webdriver
 
-from app.tools.paths import PM10_CSV_FILE, PM10_JSON_FILE
+from app.tools.paths import COORDINATES_FILE, VALUES_FILE
 
 
-class InteractiveMap:
+class MapCreator:
 
     def __init__(self, fill_color: str, fill_opacity: float, line_opacity: float=0,
                  default_location: tuple=(50, 20), default_zoom: int=9) -> None:
@@ -28,11 +28,11 @@ class InteractiveMap:
         self.target_directory = os.getcwd()
 
     def _read_csv(self):
-        return pd.read_csv(PM10_CSV_FILE)
+        return pd.read_csv(VALUES_FILE)
 
     def _create_choropleth(self) -> folium.Choropleth:
         choropleth = folium.Choropleth(
-            geo_data=PM10_JSON_FILE,
+            geo_data=COORDINATES_FILE,
             name=self.layer_name,
             data=self.csv_file,
             columns=self.columns_names,
