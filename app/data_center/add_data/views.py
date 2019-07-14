@@ -22,10 +22,12 @@ def add_data(file_type):
         name = form.name.data
         physical_quantity = form.physical_quantity.data
         year = form.year.data
+        grid_resolution = form.grid_resolution.data
         metadata = {
             "name": name,
             "physical_quantity": physical_quantity,
-            "year": year
+            "year": year,
+            "grid_resolution": grid_resolution
         }
         insert_new_file_data(parser, **metadata)
         flash(f"ADDED: {name} of {physical_quantity} from year {year}.", category='success')

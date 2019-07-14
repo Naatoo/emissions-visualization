@@ -20,6 +20,7 @@ class DataInfo(db.Model):
     physical_quantity = db.Column(db.String(20))
     unit = db.Column(db.String(10))
     year = db.Column(db.SmallInteger)
+    grid_resolution = db.Column(db.Float)
     __table_args__ = (UniqueConstraint('compound', 'physical_quantity', 'name', 'year', name='dataset_info'),)
 
     #TODO validators

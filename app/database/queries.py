@@ -11,7 +11,8 @@ def insert_new_file_data(parser, **kwargs):
         dataset_hash=dataset_hash,
         physical_quantity=kwargs["physical_quantity"],
         year=kwargs["year"],
-        name=kwargs["name"]
+        name=kwargs["name"],
+        grid_resolution=kwargs["grid_resolution"]
     ))
     db.session.commit()
     for (lon, lat, value) in parser.rows_generator():
