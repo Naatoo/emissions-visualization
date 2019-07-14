@@ -1,23 +1,20 @@
 import numpy as np
 import scipy.ndimage as ndimage
 
-from typing import List
+from typing import List, Union, Optional
 
-from app.tools.paths import BOUNDING_BOXES_JSON
-import json
 from decimal import Decimal
 
 
 class Interpolator:
 
-    def __init__(self, raw_data: List[tuple], grid_resolution, boundary_values=None, country_code=None) -> None:
+    def __init__(self, raw_data: List[tuple], grid_resolution, boundary_values=None, bounding_box=None) -> None:
         self.raw_data = raw_data
 
         self.multiplifier = 1000
-        self.country_code = country_code
         self.grid_resolution = grid_resolution
 
-        self.boundary_values = self.__generate_boundary_coordinates(boundary_values)
+        self.boundary_values = self.__generate_boundary_coordinates(boundary_values, bounding_box)
         self.possible_lon, self.possible_lat = self.__generate_possible_coordinates()
         self.regular_data = self.__generate_regular_data()
 
@@ -35,7 +32,7 @@ class Interpolator:
         idx = n.index(min(n))
         return array[idx]
 
-    def __generate_boundary_coordinates(self, boundary_values: dict) -> dict:
+    def __generate_boundary_coordinates(self, boundary_values: Optional[dict], bounding_box: Optional[tuple]) -> dict:
         # TODO add codnitions
         # value_check = value * 100
         # if value_check % 5 == 0 and value_check % 10 != 0:
@@ -43,18 +40,16 @@ class Interpolator:
             for key, value in boundary_values.items():
                 formatted_value = int(value * 1000) if "min" in key else int(value * 1000)
                 boundary_values[key] = formatted_value
-        elif self.country_code:
+        elif bounding_box:
             boundary_values = {}
             lon_format, lat_format = self.__get_lon_lat_format()
-            with open(BOUNDING_BOXES_JSON) as file:
-                data = json.load(file)
-                for key, bound_coord in zip(("lon_min", "lat_min", "lon_max", "lat_max"), data[self.country_code][1]):
-                    sign = -1 if "min" in key else 1
-                    format_iterable = lon_format if "lon" in key else lat_format
-                    coord_int = int(bound_coord) + sign
-                    possible_coords = [coord_int + pos if coord_int > 0 else coord_int - pos for pos in format_iterable]
-                    final_value = self.find_nearest(possible_coords, bound_coord)
-                    boundary_values[key] = int(final_value * 1000)
+            for key, bound_coord in zip(("lon_min", "lon_max", "lat_min", "lat_max"), bounding_box):
+                sign = -1 if "min" in key else 1
+                format_iterable = lon_format if "lon" in key else lat_format
+                coord_int = int(bound_coord) + sign
+                possible_coords = [coord_int + pos if coord_int > 0 else coord_int - pos for pos in format_iterable]
+                final_value = self.find_nearest(possible_coords, bound_coord)
+                boundary_values[key] = int(final_value * 1000)
         else:
             raise ValueError("Boundary coordinates or country code must be provided")
         # else:

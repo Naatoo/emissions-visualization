@@ -3,7 +3,7 @@ from flask import current_app as app
 
 from app.data_center.selection import data_center_select
 from app.database.queries import delete_data, get_data_metadata, get_selected_data_str
-from app.models.data_models import DataInfo
+from app.models.data_models import DatasetInfo
 
 
 @data_center_select.route('/data_center/select', methods=['GET', 'POST'])
@@ -17,7 +17,7 @@ def choose_data():
             "delete_hash": delete_hash,
             "delete_str": delete_str
         })
-    data = DataInfo.query.all()
+    data = DatasetInfo.query.all()
     table_data = [[row.name, row.year, row.physical_quantity, row.dataset_hash] for row in data]
     dataset_hash = app.config.get('CURRENT_DATA_HASH')
     selected_data_str = get_selected_data_str()

@@ -2,29 +2,29 @@ from flask import current_app as app
 from flask import render_template, redirect, url_for
 from numpy import mean
 
-import pandas
-
-from app.database.queries import get_selected_data_str, get_dataset, get_hash_of_first_dataset, get_data_metadata
+from app.database.queries import get_selected_data_str, get_dataset, get_hash_of_first_dataset, get_data_metadata, \
+    get_country_bounding_box, get_country_centroid
 from app.map_center import map_center
 from app.map_center.data_files_creator import DataFilesCreator
 from app.map_center.forms import LatLonForm, CountryForm
 from app.map_center.map_creator import MapCreator
 from app.map_center.interpolator import Interpolator
 from app.map_center.utils import generate_dataset_steps
-from app.tools.paths import COUNTRIES_CENTROIDS_CSV
 
 
-def prepare_data_for_map(zoom_value: int, boundaries: dict=None, country_code: str= None) -> None:
+def prepare_data_for_map(zoom_value: int, boundaries: dict = None, country_code: str = None) -> None:
     dataset_hash = app.config.get('CURRENT_DATA_HASH', get_hash_of_first_dataset())
     # TODO handle not dataset_hash on the startup
     row_data = get_dataset(dataset_hash)
     grid_resolution = get_data_metadata(dataset_hash).grid_resolution
+    bounding_box = get_country_bounding_box(country_code) if country_code else None
     order = 5
 
-    interpolator = Interpolator(row_data, grid_resolution, boundary_values=boundaries, country_code=country_code)
+    interpolator = Interpolator(row_data, grid_resolution, boundary_values=boundaries, bounding_box=bounding_box)
     interpolated_coordinates, interpolated_values = interpolator.interpolate(zoom_value, order)
 
-    map_files_creator = DataFilesCreator(interpolated_coordinates, interpolated_values, grid_resolution, zoom_value, country_code)
+    map_files_creator = DataFilesCreator(interpolated_coordinates, interpolated_values, grid_resolution, zoom_value,
+                                         country_code)
     map_files_creator.create_files()
 
 
@@ -61,14 +61,6 @@ def generate_map_by_coordinates(form=None):
                        fill_opacity=form.fill_opacity.data,
                        line_opacity=form.line_opacity.data,
                        default_location=(default_lon, default_lat)).map
-
-
-def get_country_centroid(expected_country_code: str):
-    data = pandas.read_csv(COUNTRIES_CENTROIDS_CSV)
-    for lon, lat, country_code in zip(data['lon'], data['lat'], data['code']):
-        if expected_country_code == country_code:
-            center_coordinates = lat, lon
-    return center_coordinates
 
 
 def generate_map_by_country(form=None):
