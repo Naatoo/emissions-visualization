@@ -2,6 +2,8 @@ from flask import Flask
 
 from flask_bootstrap import Bootstrap
 import os
+
+from app.database.initial_data_insertion import insert_countries_data
 from .home import home as home_blueprint
 from .data_center.selection import data_center_select as data_center_select_blueprint
 from .data_center.add_data import data_center_add_data as data_center_add_data_blueprint
@@ -13,7 +15,7 @@ from app.database.database import db
 from .data_center.loader.excel_parser import ExcelFileParser
 from .data_center.loader.emep_txt_parser import EmepTxtFileParser
 from app.tools.paths import EUROPE_EMISSION_PM10_2015_EXCEL_FILE, COUNTRIES_CENTROIDS_CSV, PM10_RAW_FILE
-from app.models.data_models import DataValues, DataInfo
+from app.models.data_models import DatasetValues, DatasetInfo
 from app.tools.paths import DATABASE_FILE
 
 import secrets
@@ -39,6 +41,7 @@ def setup_database(app):
         db.create_all()
         # insert_initial_europe_data()
         # insert_initial_emep_data()
+        # insert_countries_data()
 
 
 def insert_initial_europe_data():
@@ -49,7 +52,7 @@ def insert_initial_europe_data():
     unit = 'µg/m3'
     year = 2015
     parser = ExcelFileParser(file_name=EUROPE_EMISSION_PM10_2015_EXCEL_FILE)
-    db.session.add(DataInfo(
+    db.session.add(DatasetInfo(
         dataset_hash=dataset_hash,
         name=name,
         compound=compound,
@@ -59,11 +62,11 @@ def insert_initial_europe_data():
     ))
     db.session.commit()
     for (lon, lat, value) in parser.parse_data_file():
-        db.session.add(DataValues(dataset_hash=dataset_hash,
-                                  lon=lon,
-                                  lat=lat,
-                                  value=value
-                                  ))
+        db.session.add(DatasetValues(dataset_hash=dataset_hash,
+                                     lon=lon,
+                                     lat=lat,
+                                     value=value
+                                     ))
         db.session.flush()
     db.session.commit()
 
@@ -75,17 +78,17 @@ def insert_initial_emep_data():
     name = "PM10 yearly"
     parser = EmepTxtFileParser(file_name=PM10_RAW_FILE)
 
-    db.session.add(DataInfo(
+    db.session.add(DatasetInfo(
         dataset_hash=dataset_hash,
         physical_quantity=physical_quantity,
         year=year,
         name=name
     ))
     for (lon, lat, value) in parser.parse_data_file():
-        db.session.add(DataValues(dataset_hash=dataset_hash,
-                                  lon=lon,
-                                  lat=lat,
-                                  value=value
-                                  ))
+        db.session.add(DatasetValues(dataset_hash=dataset_hash,
+                                     lon=lon,
+                                     lat=lat,
+                                     value=value
+                                     ))
         # db.session.flush()
     db.session.commit()

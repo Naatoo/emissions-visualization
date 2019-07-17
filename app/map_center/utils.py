@@ -15,3 +15,9 @@ def generate_dataset_steps(dataset_hash):
 
     steps = {"lon": Counter(lon_steps).most_common(1)[0][0], "lat": Counter(lon_steps).most_common(1)[0][0]}
     return steps
+
+
+def generate_coordinates_center(**kwargs):
+    lat_center = kwargs["lat_min"] + (abs(kwargs["lat_max"]) - abs(kwargs["lat_min"])) / 2
+    lon_center = kwargs["lon_min"] + (abs(kwargs["lon_max"]) - abs(kwargs["lon_min"])) / 2
+    return lat_center, lon_center

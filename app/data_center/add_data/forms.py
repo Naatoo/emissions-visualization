@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, FileField, StringField, SelectField
+from wtforms import SubmitField, StringField, SelectField, DecimalField
 from wtforms.validators import DataRequired
 
 
@@ -14,4 +14,5 @@ class AddDataForm(FlaskForm):
     unit = StringField('Unit', validators=[DataRequired()])
     year = SelectField('Year', validators=[DataRequired()],
                        choices=[(year, year) for year in range(1900, 2101)], default=2015)
+    grid_resolution = DecimalField('Grid resolution', validators=[DataRequired()])
     submit = SubmitField('Submit')

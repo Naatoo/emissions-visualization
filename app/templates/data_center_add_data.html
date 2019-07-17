@@ -5,29 +5,30 @@
 {% block main %}
 <form method="POST" enctype="multipart/form-data">
     <div class="form-row">
-    <div class="form-group col-md-6">
-        <div class="form-row">
-            <div class="form-group col-md-12">
-                <div class="form-group">
-                    {{ form.name.label(for="name" )}}
-                    {{ form.name(class="form-control", id="name", placeholder="Name of this dataset")}}
+        <div class="form-group col-md-6">
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <div class="form-group">
+                        {{ form.name.label(for="name" )}}
+                        {{ form.name(class="form-control", id="name", placeholder="Name of this dataset")}}
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-12">
-                <div class="form-group">
-                    {{ form.compound.label(for="name" )}}
-                    {{ form.compound(class="form-control", id="compound", placeholder="e.g.: PM10, SOx")}}
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <div class="form-group">
+                        {{ form.compound.label(for="name" )}}
+                        {{ form.compound(class="form-control", id="compound", placeholder="e.g.: PM10, SOx")}}
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-12">
+            <div class="form-row">
+                <div class="form-group col-md-12">
                     {{ form.physical_quantity.label(for="physical_quantity" )}}
-                    {{ form.physical_quantity(class="form-control", id="physical_quantity", placeholder="e.g.: Emission, Concentration")}}
+                    {{ form.physical_quantity(class="form-control", id="physical_quantity", placeholder="e.g.: Emission,
+                    Concentration")}}
+                </div>
             </div>
-        </div>
             <div class="form-group col-md-9">
                 {{ form.unit.label(for="unit" )}}
                 {{ form.unit(class="form-control", id="unit", placeholder="e.g. µg/m3, t")}}
@@ -36,12 +37,18 @@
                 {{ form.year.label(for="year" )}}
                 {{ form.year(class="form-control", id="year", placeholder="e.g. µg/m3, t")}}
             </div>
-        <div class="form-row">
-            <div class="form-group col-md-12">
-                {{ form.submit(class="btn btn-primary") }}
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    {{ form.grid_resolution.label(for="grid_resolution" )}}
+                    {{ form.grid_resolution(class="form-control", id="grid_resolution", placeholder="e.g.: 1, 0.1, 0.05")}}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
             </div>
         </div>
-    </div>
         <div class="form-group col-md-6">
             <h3>Current file preview:</h3>
             <table class="table table-striped">
