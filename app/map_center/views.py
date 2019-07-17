@@ -1,6 +1,5 @@
 from flask import current_app as app
 from flask import render_template, redirect, url_for
-from numpy import mean
 
 from app.database.queries import get_selected_data_str, get_dataset, get_hash_of_first_dataset, get_data_metadata, \
     get_country_bounding_box, get_country_centroid
@@ -9,7 +8,7 @@ from app.map_center.data_files_creator import DataFilesCreator
 from app.map_center.forms import LatLonForm, CountryForm
 from app.map_center.map_creator import MapCreator
 from app.map_center.interpolator import Interpolator
-from app.map_center.utils import generate_dataset_steps
+from app.map_center.utils import generate_dataset_steps, generate_coordinates_center
 
 
 def prepare_data_for_map(zoom_value: int, boundaries: dict = None, country_code: str = None) -> None:
@@ -20,7 +19,7 @@ def prepare_data_for_map(zoom_value: int, boundaries: dict = None, country_code:
     bounding_box = get_country_bounding_box(country_code) if country_code else None
     order = 5
 
-    interpolator = Interpolator(row_data, grid_resolution, boundary_values=boundaries, bounding_box=bounding_box)
+    interpolator = Interpolator(row_data, grid_resolution, bounding_box=bounding_box, chosen_boundary_coordinates=boundaries)
     interpolated_coordinates, interpolated_values = interpolator.interpolate(zoom_value, order)
 
     map_files_creator = DataFilesCreator(interpolated_coordinates, interpolated_values, grid_resolution, zoom_value,
@@ -55,12 +54,10 @@ def generate_map_by_coordinates(form=None):
         prepare_data_for_map(boundaries=boundaries,
                              zoom_value=int(form.interpolation.data))
 
-        default_lon = mean([boundaries["lat_min"], boundaries["lat_max"]]) / 1000
-        default_lat = mean([boundaries["lon_min"], boundaries["lon_max"]]) / 1000
         m = MapCreator(fill_color=form.color.data,
                        fill_opacity=form.fill_opacity.data,
                        line_opacity=form.line_opacity.data,
-                       default_location=(default_lon, default_lat)).map
+                       default_location=generate_coordinates_center(**boundaries)).map
 
 
 def generate_map_by_country(form=None):

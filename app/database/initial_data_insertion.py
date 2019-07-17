@@ -10,7 +10,6 @@ from app.tools.paths import COUNTRIES_CENTROIDS_CSV, BOUNDING_BOXES_JSON
 def insert_countries_data():
     if not Countries.query.all():
         for code, name, [box_lon_min, box_lat_min, box_lon_max, box_lat_max] in get_country_code_name_bounding_box():
-            print(code, name, [box_lon_min, box_lat_min, box_lon_max, box_lat_max])
             try:
                 centroid_lon, centroid_lat = get_country_centroid(code)
             except TypeError:
@@ -39,6 +38,3 @@ def get_country_code_name_bounding_box():
         data = json.load(file)
         for code in data:
             yield (code, *data[code])
-
-
-get_country_code_name_bounding_box()
