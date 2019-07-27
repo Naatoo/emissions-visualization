@@ -43,7 +43,8 @@ class MapCreator:
         return choropleth
 
     def _create_map(self) -> folium.Map:
-        map_folium = folium.Map(location=self.default_location, zoom_start=self.default_zoom, control_scale=True)
+        map_folium = folium.Map(location=self.default_location, zoom_start=self.default_zoom, control_scale=True,
+                                prefer_canvas=True)
         map_folium.add_child(self._create_choropleth())
         folium.LatLngPopup().add_to(map_folium)
         folium.ClickForMarker().add_to(map_folium)
