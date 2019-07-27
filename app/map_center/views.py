@@ -11,13 +11,12 @@ from app.map_center.interpolator import Interpolator
 from app.map_center.utils import generate_dataset_steps, generate_coordinates_center
 
 
-def prepare_data_for_map(zoom_value: int, boundaries: dict = None, country_code: str = None) -> None:
+def prepare_data_for_map(zoom_value: int, boundaries: dict = None, country_code: str = None, order: int=3) -> None:
     dataset_hash = app.config.get('CURRENT_DATA_HASH', get_hash_of_first_dataset())
     # TODO handle not dataset_hash on the startup
     row_data = get_dataset(dataset_hash)
     grid_resolution = get_data_metadata(dataset_hash).grid_resolution
     bounding_box = get_country_bounding_box(country_code) if country_code else None
-    order = 5
 
     interpolator = Interpolator(row_data, grid_resolution, bounding_box=bounding_box, chosen_boundary_coordinates=boundaries)
     interpolated_coordinates, interpolated_values = interpolator.interpolate(zoom_value, order)
@@ -52,7 +51,8 @@ def generate_map_by_coordinates(form=None):
             "lat_max": form.lat_max.data
         }
         prepare_data_for_map(boundaries=boundaries,
-                             zoom_value=int(form.interpolation.data))
+                             zoom_value=int(form.zoom.data),
+                             order=int(form.interpolation_type.data))
 
         m = MapCreator(fill_color=form.color.data,
                        fill_opacity=form.fill_opacity.data,
@@ -72,7 +72,8 @@ def generate_map_by_country(form=None):
                        default_zoom=8).map
     else:
         prepare_data_for_map(country_code=form.country.data,
-                             zoom_value=int(form.interpolation.data))
+                             zoom_value=int(form.zoom.data),
+                             order=int(form.interpolation_type.data))
 
         m = MapCreator(fill_color=form.color.data,
                        fill_opacity=form.fill_opacity.data,

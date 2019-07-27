@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.ndimage as ndimage
 
-from typing import List, Union, Optional, Tuple, Generator
+from typing import List, Optional, Generator
 
 from decimal import Decimal
 
@@ -14,11 +14,11 @@ class Interpolator:
         self.multiplifier = 1000
         self.grid_resolution = grid_resolution
 
-        self.boundaries = self.generate_boundaries(bounding_box, chosen_boundary_coordinates)
-        self.possible_lon, self.possible_lat = self.__generate_possible_coordinates()
+        self.boundaries = self.__generate_boundaries(bounding_box, chosen_boundary_coordinates)
+        self.possible_lon, self.possible_lat = self.__generate_chosen_coordinates()
         self.regular_data = self.__generate_regular_data()
 
-    def generate_boundaries(self, bounding_box: Optional[tuple], chosen_boundary_coordinates: Optional[dict]) -> dict:
+    def __generate_boundaries(self, bounding_box: Optional[tuple], chosen_boundary_coordinates: Optional[dict]) -> dict:
         if bounding_box and chosen_boundary_coordinates:
             raise ValueError(
                 "Only one type on generation can be chosen: by country bounding box or by chosen coordinates")
@@ -51,16 +51,17 @@ class Interpolator:
         return ([float(x) for x in coord_type] for coord_type in (lon_format, lat_format))
 
     @staticmethod
-    def find_nearest(array, value):
-        n = [abs(i - value) for i in array]
-        idx = n.index(min(n))
-        return array[idx]
+    def find_nearest(iterable: list, value: float) -> float:
+        diffs = [abs(i - value) for i in iterable]
+        nearest_id = diffs.index(min(diffs))
+        return iterable[nearest_id]
 
-    def __generate_possible_coordinates(self):
-        possible_coords = [[x / self.multiplifier for x in range(self.boundaries[coord + "_min"],
-                                                                 self.boundaries[coord + "_max"] + 1,
-                                                                 int(self.grid_resolution * self.multiplifier))]
-                           for coord in ("lon", "lat")]
+    def __generate_chosen_coordinates(self):
+        possible_coords = [
+            [x / self.multiplifier for x in range(self.boundaries[coord + "_min"],
+                                                  self.boundaries[coord + "_max"] + 1,
+                                                  int(self.grid_resolution * self.multiplifier))]
+            for coord in ("lon", "lat")]
         return possible_coords
 
     def __generate_regular_data(self):
@@ -81,10 +82,10 @@ class Interpolator:
                     regular_data.append((lon, lat, 0))
         return regular_data
 
-    @staticmethod
-    def __get_exponent(number):
-        (sign, digits, exponent) = Decimal(number).as_tuple()
-        return len(digits) + exponent - 1
+    def interpolate(self, zoom_value: int, order: int) -> tuple:
+        zoomed_coordinates = self.zoom_coordinates(zoom_value)
+        zoomed_values = self.zoom_values(zoom_value, order)
+        return zoomed_coordinates, zoomed_values
 
     def zoom_values(self, zoom_value: int, order: int = 3):
         values_list = [row[2] for row in self.regular_data]
@@ -110,10 +111,7 @@ class Interpolator:
                     final_coords.append((lon, lat))
         return final_coords
 
-    def interpolate(self, zoom_value: int, order: int) -> tuple:
-        possible_zoom_values = 1, 2, 3, 5, 10, 25
-        assert zoom_value in possible_zoom_values, \
-            "Chosen zoom value: {} is not in possible zoom values: {}".format(zoom_value, possible_zoom_values)
-        zoomed_coordinates = self.zoom_coordinates(zoom_value)
-        zoomed_values = self.zoom_values(zoom_value, order)
-        return zoomed_coordinates, zoomed_values
+    @staticmethod
+    def __get_exponent(number):
+        (sign, digits, exponent) = Decimal(number).as_tuple()
+        return len(digits) + exponent - 1

@@ -1,7 +1,6 @@
 import folium
 import os
 import pandas as pd
-from selenium import webdriver
 
 from app.tools.paths import COORDINATES_FILE, VALUES_FILE
 
@@ -9,7 +8,7 @@ from app.tools.paths import COORDINATES_FILE, VALUES_FILE
 class MapCreator:
 
     def __init__(self, fill_color: str, fill_opacity: float, line_opacity: float=0,
-                 default_location: tuple=(50, 20), default_zoom: int=9) -> None:
+                 default_location: tuple=(50, 20), default_zoom: int=6) -> None:
         self.file_name = "PM10_zoomed"
         self.csv_file = self._read_csv()
 
@@ -58,18 +57,3 @@ class MapCreator:
         folium.TileLayer('Mapbox Control Room').add_to(map_folium)
         map_folium.add_child(folium.LayerControl())
         return map_folium
-
-    def write_to_file(self, target_name: str=None, target_directory: str=None) -> None:
-        self.target_name = target_name if target_name else "{}.html".format(self.file_name)
-        self.target_directory = target_directory if target_directory else self.target_directory
-        self.map.save(self.target_name)
-
-    def run_map_and_freeze(self) -> None:
-        url = 'file://{path}/{mapfile}'.format(path=self.target_directory, mapfile=self.target_name)
-        try:
-            browser = webdriver.Firefox(executable_path="geckodriver", )
-            browser.maximize_window()
-            browser.get(url)
-            breakpoint()
-        finally:
-            browser.quit()
