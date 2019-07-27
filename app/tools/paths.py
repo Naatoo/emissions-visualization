@@ -4,22 +4,22 @@ from pathlib import Path
 
 MAIN_DIR = str(Path(__file__).parent.parent)
 
-DATA_DIR = os.path.join(MAIN_DIR, "data_center/")
-RAW_DATA_DIR = os.path.join(DATA_DIR, "raw/")
-OUTPUT_DATA_DIR = os.path.join(DATA_DIR, "output/")
-PM10_RAW_FILE = os.path.join(RAW_DATA_DIR, "PM10_raw.txt")
-
-EUROPE_EMISSION_PM25_2015_EXCEL_FILE = os.path.join(RAW_DATA_DIR, 'europe_PM25_2015.xlsx')
-EUROPE_EMISSION_PM10_2015_EXCEL_FILE = os.path.join(RAW_DATA_DIR, 'europe_PM10_2015.xlsx')
-
-COUNTRIES_TXT_FILE = os.path.join(RAW_DATA_DIR, 'countries.txt')
-BOUNDING_BOXES_JSON = os.path.join(RAW_DATA_DIR, 'bounding_boxes.json')
-COUNTRIES_CENTROIDS_CSV = os.path.join(RAW_DATA_DIR, "countries_centroids.csv")
-
 DATABASE_DIR = os.path.join(MAIN_DIR, "database/")
 DATABASE_FILE = os.path.join(DATABASE_DIR, "data.db")
 
-TEMP_DIR = os.path.join(MAIN_DIR, "temp/")
-UPLOADED_FILE = os.path.join(TEMP_DIR, "uploaded_file")
-COORDINATES_FILE = os.path.join(TEMP_DIR, "coordinates.json")
-VALUES_FILE = os.path.join(TEMP_DIR, "values.csv")
+COUNTRIES_DATA_DIR = os.path.join(DATABASE_DIR, "countries_data/")
+COUNTRIES_TXT_FILE = os.path.join(COUNTRIES_DATA_DIR, 'countries.txt')
+BOUNDING_BOXES_JSON = os.path.join(COUNTRIES_DATA_DIR, 'bounding_boxes.json')
+COUNTRIES_CENTROIDS_CSV = os.path.join(COUNTRIES_DATA_DIR, "countries_centroids.csv")
+
+INITIAL_DATA_DIR = os.path.join(DATABASE_DIR, "initial_data/")
+EUROPE_EMISSION_PM25_2015_EXCEL_FILE = os.path.join(INITIAL_DATA_DIR, 'europe_PM25_2015.xlsx')
+EUROPE_EMISSION_PM10_2015_EXCEL_FILE = os.path.join(INITIAL_DATA_DIR, 'europe_PM10_2015.xlsx')
+PM10_RAW_FILE = os.path.join(INITIAL_DATA_DIR, "PM10_raw.txt")
+
+MAP_CENTER_DIR = os.path.join(MAIN_DIR, "map_center/")
+TEMP_MAP_CENTER_DIR = os.path.join(MAP_CENTER_DIR, "temp/")
+COORDINATES_FILE = os.path.join(TEMP_MAP_CENTER_DIR, "coordinates.json")
+VALUES_FILE = os.path.join(TEMP_MAP_CENTER_DIR, "values.csv")
+
+UPLOADED_FILE = os.path.join(MAIN_DIR, "data_center/upload_file/temp/file")

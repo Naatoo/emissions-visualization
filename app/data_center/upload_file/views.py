@@ -3,8 +3,8 @@ from werkzeug.utils import secure_filename
 
 from app.data_center.upload_file import data_center_upload_file
 from app.data_center.upload_file.forms import UploadFileForm
-from app.database.queries import insert_new_file_data, get_selected_data_str
-from app.tools.paths import TEMP_DIR
+from app.database.queries import get_selected_data_str
+from app.tools.paths import UPLOADED_FILE
 
 
 @data_center_upload_file.route('/data_center/upload_file', methods=['GET', 'POST'])
@@ -13,7 +13,7 @@ def upload_file():
     if form.is_submitted():
         filename = secure_filename(form.file.data.filename)
         possible_extensions = "xlsx", "json", "txt", "csv"
-        form.file.data.save(TEMP_DIR + "uploaded_file")
+        form.file.data.save(UPLOADED_FILE)
         if filename.endswith(possible_extensions):
             correct = True
         else:
