@@ -22,16 +22,12 @@ class DataFilesCreator:
             if reverse_geocode.get((lat, lon))["country_code"] == self.country_code or self.country_code is None:
                 coords = self.generate_square_coordinates(str(lon), str(lat), coeff=coeff)
                 value = zoomed_values[index]
-                feature = Feature(
-                    geometry=Polygon(coords),
-                    properties={
-                        "id": index
-                    })
-                features.append(feature)
-                final_values.append((index, value))
+                if value > 0.01:
+                    feature = Feature(geometry=Polygon(coords), properties={"id": index})
+                    features.append(feature)
+                    final_values.append((index, value))
         collection = FeatureCollection(features)
         return collection, final_values
-        # TODO do not draw choropleth if value=0
 
     @staticmethod
     def generate_square_coordinates(lat: str, lon: str, coeff) -> list:
