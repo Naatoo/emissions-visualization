@@ -16,17 +16,27 @@ table {
   width: 100%;
   border: 1px solid #000;
 }
-th.delete, th.select {
-  width: 8%
+th.name {
+  width: 40%;
 }
-th.year {
-  width: 5%
+th.compound {
+  width: 10%;
 }
 th.physical-quantity {
   width: 10%
 }
-th.name {
-  width: 60%;
+th.unit {
+  width: 8%
+}
+th.year {
+  width: 8%
+}
+th.grid_resolution {
+  width: 8%
+}
+
+th.delete, th.select {
+  width: 8%
 }
 button.confirm-delete {
  width: 20%;
@@ -52,8 +62,11 @@ button.confirm-delete {
     <thead>
     <tr>
         <th scope="col" class="name">Name</th>
-        <th scope="col" class="year">Year</th>
+        <th scope="col" class="compound">Compound</th>
         <th scope="col" class="physical-quantity">Physical quantity</th>
+        <th scope="col" class="unit">Unit</th>
+        <th scope="col" class="year">Year</th>
+        <th scope="col" class="grid-resolution">Grid resolution</th>
         <th scope="col" class="select">Select</th>
         <th scope="col" class="delete">Delete</th>
     </tr>
@@ -61,16 +74,19 @@ button.confirm-delete {
     <tbody>
     {% for row in rows %}
 
-    <tr {% if row[3]==current_hash %} class="selected" {% endif %}>
-        <td>{{ row[0] }}</td>
+    <tr {% if row[0]==current_hash %} class="selected" {% endif %}>
         <td>{{ row[1] }}</td>
         <td>{{ row[2] }}</td>
+        <td>{{ row[3] }}</td>
+        <td>{{ row[4] }}</td>
+        <td>{{ row[5] }}</td>
+        <td>{{ row[6] }}</td>
         <td>
-            <form method="post" action="{{ url_for('data_center_select.select', value=row[3]) }}">
+            <form method="post" action="{{ url_for('data_center_select.select', value=row[0]) }}">
                 <button type="submit">Select</button>
             </form>
         <td>
-            <form method="post" action="{{ url_for('data_center_select.delete', value=row[3]) }}">
+            <form method="post" action="{{ url_for('data_center_select.delete', value=row[0]) }}">
                 <button type="submit">Delete</button>
             </form>
         </td>

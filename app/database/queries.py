@@ -11,7 +11,9 @@ def insert_new_file_data(parser, **kwargs):
     dataset_hash = secrets.token_hex(nbytes=16)
     db.session.add(DatasetInfo(
         dataset_hash=dataset_hash,
+        compound=kwargs["compound"],
         physical_quantity=kwargs["physical_quantity"],
+        unit=kwargs["unit"],
         year=kwargs["year"],
         name=kwargs["name"],
         grid_resolution=kwargs["grid_resolution"]
