@@ -40,16 +40,21 @@ class DataFilesCreator:
             l.append((a, b))
         return [l]
 
-    def create_files(self):
-        with open(COORDINATES_FILE, "w") as coordinates_file:
-            text = {
-                "type": "FeatureCollection",
-                "features": "{}"
-            }
-            coordinates_file.write(text["features"].format(self.collection))
+    def create_files(self) -> bool:
+        if self.indexed_values:
+            with open(COORDINATES_FILE, "w") as coordinates_file:
+                text = {
+                    "type": "FeatureCollection",
+                    "features": "{}"
+                }
+                coordinates_file.write(text["features"].format(self.collection))
 
-        with open(VALUES_FILE, 'w') as values_file:
-            filewriter = csv.writer(values_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-            filewriter.writerow(['id', 'value'])
-            for row in self.indexed_values:
-                filewriter.writerow(row)
+            with open(VALUES_FILE, 'w') as values_file:
+                filewriter = csv.writer(values_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                filewriter.writerow(['id', 'value'])
+                for row in self.indexed_values:
+                    filewriter.writerow(row)
+            files_created = True
+        else:
+            files_created = False
+        return files_created

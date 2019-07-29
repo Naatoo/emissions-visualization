@@ -16,7 +16,7 @@ class Interpolator:
 
         self.boundaries = self.__generate_boundaries(bounding_box, chosen_boundary_coordinates)
         self.possible_lon, self.possible_lat = self.__generate_chosen_coordinates()
-        self.regular_data = self.__generate_regular_data()
+        self.regular_data, self.compliant_coordinates_boolean = self.__generate_regular_data()
 
     def __generate_boundaries(self, bounding_box: Optional[tuple], chosen_boundary_coordinates: Optional[dict]) -> dict:
         if bounding_box and chosen_boundary_coordinates:
@@ -70,9 +70,10 @@ class Interpolator:
             lon, lat = row[:2]
             if lon in self.possible_lon and lat in self.possible_lat:
                 regular_data.append(row)
+        compliant_coordinates_boolean = True if regular_data else False
         regular_data = self.__fill_data_to_array_shape(regular_data)
         regular_data.sort(key=lambda x: (-x[0], x[1]))
-        return regular_data
+        return regular_data, compliant_coordinates_boolean
 
     def __fill_data_to_array_shape(self, regular_data: list):
         coordinates = [(row[:2]) for row in self.raw_data]

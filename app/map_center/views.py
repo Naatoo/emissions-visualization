@@ -1,4 +1,4 @@
-from flask import current_app as app
+from flask import current_app as app, flash
 from flask import render_template, redirect, url_for
 
 from app.database.queries import get_selected_data_str, get_dataset, get_hash_of_first_dataset, get_data_metadata, \
@@ -64,10 +64,13 @@ def generate_map(form, option):
         default_location = generate_coordinates_center(**boundaries)
         country_code = None
 
-    create_files_for_choropleths(boundaries=boundaries,
-                                 order=order,
-                                 zoom_value=zoom_values,
-                                 country_code=country_code)
+    files_created_state = create_files_for_choropleths(boundaries=boundaries,
+                                                       order=order,
+                                                       zoom_value=zoom_values,
+                                                       country_code=country_code)
+    if not files_created_state:
+        flash(f"No values were found for chosen {option}", category="warning")
+        return redirect(url_for(f"map_center.map_by_{option}"))
 
     m = MapCreator(fill_color=fill_color,
                    fill_opacity=fill_opacity,
@@ -75,19 +78,23 @@ def generate_map(form, option):
                    default_location=default_location).map
 
 
-def create_files_for_choropleths(zoom_value: int, order: int, boundaries: dict = None, country_code: str = None) -> None:
+def create_files_for_choropleths(zoom_value: int, order: int, boundaries: dict = None,
+                                 country_code: str = None) -> bool:
     dataset_hash, row_data, grid_resolution, bounding_box = prepare_data_for_interpolation(country_code)
 
     interpolator = Interpolator(row_data, grid_resolution, bounding_box=bounding_box,
                                 chosen_boundary_coordinates=boundaries)
+    if not interpolator.compliant_coordinates_boolean:
+        return False
     interpolated_coordinates, interpolated_values = interpolator.interpolate(zoom_value, order)
 
     map_files_creator = DataFilesCreator(interpolated_coordinates, interpolated_values, grid_resolution, zoom_value,
                                          country_code)
-    map_files_creator.create_files()
+    state = map_files_creator.create_files()
+    return state
 
 
-def prepare_data_for_interpolation(country_code: str=None):
+def prepare_data_for_interpolation(country_code: str = None):
     dataset_hash = app.config.get('CURRENT_DATA_HASH', get_hash_of_first_dataset())
     row_data = get_dataset(dataset_hash)
     grid_resolution = get_data_metadata(dataset_hash).grid_resolution
