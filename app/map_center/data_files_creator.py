@@ -22,16 +22,12 @@ class DataFilesCreator:
             if reverse_geocode.get((lat, lon))["country_code"] == self.country_code or self.country_code is None:
                 coords = self.generate_square_coordinates(str(lon), str(lat), coeff=coeff)
                 value = zoomed_values[index]
-                feature = Feature(
-                    geometry=Polygon(coords),
-                    properties={
-                        "id": index
-                    })
-                features.append(feature)
-                final_values.append((index, value))
+                if value > 0.01:
+                    feature = Feature(geometry=Polygon(coords), properties={"id": index})
+                    features.append(feature)
+                    final_values.append((index, value))
         collection = FeatureCollection(features)
         return collection, final_values
-        # TODO do not draw choropleth if value=0
 
     @staticmethod
     def generate_square_coordinates(lat: str, lon: str, coeff) -> list:
@@ -44,16 +40,21 @@ class DataFilesCreator:
             l.append((a, b))
         return [l]
 
-    def create_files(self):
-        with open(COORDINATES_FILE, "w") as coordinates_file:
-            text = {
-                "type": "FeatureCollection",
-                "features": "{}"
-            }
-            coordinates_file.write(text["features"].format(self.collection))
+    def create_files(self) -> bool:
+        if self.indexed_values:
+            with open(COORDINATES_FILE, "w") as coordinates_file:
+                text = {
+                    "type": "FeatureCollection",
+                    "features": "{}"
+                }
+                coordinates_file.write(text["features"].format(self.collection))
 
-        with open(VALUES_FILE, 'w') as values_file:
-            filewriter = csv.writer(values_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-            filewriter.writerow(['id', 'value'])
-            for row in self.indexed_values:
-                filewriter.writerow(row)
+            with open(VALUES_FILE, 'w') as values_file:
+                filewriter = csv.writer(values_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                filewriter.writerow(['id', 'value'])
+                for row in self.indexed_values:
+                    filewriter.writerow(row)
+            files_created = True
+        else:
+            files_created = False
+        return files_created

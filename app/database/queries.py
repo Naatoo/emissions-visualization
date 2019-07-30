@@ -1,6 +1,7 @@
 import secrets
 
 from flask import current_app as app
+from sqlalchemy import and_
 
 from app.database.database import db
 from app.models.data_models import DatasetInfo, DatasetValues, Countries
@@ -10,7 +11,9 @@ def insert_new_file_data(parser, **kwargs):
     dataset_hash = secrets.token_hex(nbytes=16)
     db.session.add(DatasetInfo(
         dataset_hash=dataset_hash,
+        compound=kwargs["compound"],
         physical_quantity=kwargs["physical_quantity"],
+        unit=kwargs["unit"],
         year=kwargs["year"],
         name=kwargs["name"],
         grid_resolution=kwargs["grid_resolution"]
@@ -39,6 +42,11 @@ def get_dataset(dataset_hash, rows_limit: int=None):
     dataset = DatasetValues.query.filter_by(dataset_hash=dataset_hash)
     if rows_limit:
         dataset = dataset.limit(rows_limit)
+    return [(row.lon, row.lat, row.value) for row in dataset.all()]
+
+
+def get_dataset_by_coordinates(dataset_hash, boundary_coordinates: dict):
+    dataset = DatasetValues.query.filter_by(and_(dataset_hash=dataset_hash, **boundary_coordinates))
     return [(row.lon, row.lat, row.value) for row in dataset.all()]
 
 

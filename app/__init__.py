@@ -9,7 +9,6 @@ from .data_center.selection import data_center_select as data_center_select_blue
 from .data_center.add_data import data_center_add_data as data_center_add_data_blueprint
 from .data_center.upload_file import data_center_upload_file as data_center_upload_file_blueprint
 from .map_center import map_center as map_center_blueprint
-from app.map_center.views import generate_map_by_coordinates, generate_map_by_country
 from app.database.database import db
 
 from .data_center.loader.excel_parser import ExcelFileParser

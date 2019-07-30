@@ -20,12 +20,16 @@ def add_data(file_type):
     if form.is_submitted():
         #TODO validators
         name = form.name.data
+        compound = form.compound.data
         physical_quantity = form.physical_quantity.data
+        unit = form.unit.data
         year = form.year.data
         grid_resolution = form.grid_resolution.data
         metadata = {
             "name": name,
+            "compound": compound,
             "physical_quantity": physical_quantity,
+            "unit": unit,
             "year": year,
             "grid_resolution": grid_resolution
         }
