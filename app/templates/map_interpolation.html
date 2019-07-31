@@ -1,0 +1,21 @@
+{% import "bootstrap/utils.html" as utils %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends 'map_base.html' %}
+{% block interpolation %}
+<div class="form-row">
+    <div class="form-group col-md-12">
+        <div class="form-group">
+            {{ form.zoom.label(for="zoom" )}}
+            {{ form.zoom(class="form-control", id="zoom") }}
+        </div>
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-12">
+        <div class="form-group">
+            {{ form.interpolation_type.label(for="interpolation_type" )}}
+            {{ form.interpolation_type(class="form-control", id="interpolation_type") }}
+        </div>
+    </div>
+</div>
+{% endblock %}
