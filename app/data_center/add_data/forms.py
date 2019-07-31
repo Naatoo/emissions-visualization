@@ -14,5 +14,6 @@ class AddDataForm(FlaskForm):
     unit = StringField('Unit', validators=[DataRequired()])
     year = SelectField('Year', validators=[DataRequired()],
                        choices=[(year, year) for year in range(1900, 2101)], default=2015)
-    grid_resolution = DecimalField('Grid resolution', validators=[DataRequired()])
+    lon_resolution = DecimalField('Longitude resolution', validators=[DataRequired()])
+    lat_resolution = DecimalField('Latitude resolution', validators=[DataRequired()])
     submit = SubmitField('Submit')

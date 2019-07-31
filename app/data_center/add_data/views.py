@@ -18,20 +18,21 @@ def add_data(file_type):
     preview_data = parser.get_data_for_preview(limit=20)
     form = AddDataForm()
     if form.is_submitted():
-        #TODO validators
         name = form.name.data
         compound = form.compound.data
         physical_quantity = form.physical_quantity.data
         unit = form.unit.data
         year = form.year.data
-        grid_resolution = form.grid_resolution.data
+        lon_resolution = form.lon_resolution.data
+        lat_resolution = form.lat_resolution.data
         metadata = {
             "name": name,
             "compound": compound,
             "physical_quantity": physical_quantity,
             "unit": unit,
             "year": year,
-            "grid_resolution": grid_resolution
+            "lon_resolution": lon_resolution,
+            "lat_resolution": lat_resolution
         }
         insert_new_file_data(parser, **metadata)
         flash(f"ADDED: {name} of {physical_quantity} from year {year}.", category='success')
