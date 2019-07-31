@@ -18,6 +18,6 @@ def generate_dataset_steps(dataset_hash):
 
 
 def generate_coordinates_center(**kwargs):
-    lat_center = kwargs["lat_min"] + (abs(kwargs["lat_max"]) - abs(kwargs["lat_min"])) / 2
-    lon_center = kwargs["lon_min"] + (abs(kwargs["lon_max"]) - abs(kwargs["lon_min"])) / 2
+    lat_center = kwargs["lat_min"] + (abs(kwargs["lat_max"]) - kwargs["lat_min"]) / 2
+    lon_center = kwargs["lon_min"] + (abs(kwargs["lon_max"]) - kwargs["lon_min"]) / 2
     return lat_center, lon_center
