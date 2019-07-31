@@ -5,6 +5,7 @@ from sqlalchemy import and_
 
 from app.database.database import db
 from app.models.data_models import DatasetInfo, DatasetValues, Countries
+from app.tools.exceptions import LonLatResolutionException
 
 
 def insert_new_file_data(parser, **kwargs):
@@ -16,7 +17,8 @@ def insert_new_file_data(parser, **kwargs):
         unit=kwargs["unit"],
         year=kwargs["year"],
         name=kwargs["name"],
-        grid_resolution=kwargs["grid_resolution"]
+        lon_resolution=kwargs["lon_resolution"],
+        lat_resolution=kwargs["lat_resolution"],
     ))
     db.session.commit()
     for (lon, lat, value) in parser.rows_generator():
@@ -75,5 +77,21 @@ def get_selected_data_str():
     return selected_data_str
 
 
+def assert_lon_lat_resolution_identical():
+    dataset_hash = app.config.get('CURRENT_DATA_HASH')
+    data = DatasetInfo.query.filter_by(dataset_hash=dataset_hash).one()
+    if float(data.lon_resolution) != float(data.lat_resolution):
+        raise LonLatResolutionException
+
+
 def get_hash_of_first_dataset():
     return DatasetInfo.query.all()[0].dataset_hash
+
+
+def get_boundary_values_for_dataset() -> dict:
+    dataset_hash = app.config.get('CURRENT_DATA_HASH')
+    lon_min = DatasetValues.query.filter_by(dataset_hash=dataset_hash).order_by(DatasetValues.lon).first().lon
+    lon_max = DatasetValues.query.filter_by(dataset_hash=dataset_hash).order_by(DatasetValues.lon.desc()).first().lon
+    lat_min = DatasetValues.query.filter_by(dataset_hash=dataset_hash).order_by(DatasetValues.lat).first().lat
+    lat_max = DatasetValues.query.filter_by(dataset_hash=dataset_hash).order_by(DatasetValues.lat.desc()).first().lat
+    return {"lon_min": lon_min, "lon_max": lon_max, "lat_min": lat_min, "lat_max": lat_max}

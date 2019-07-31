@@ -1,22 +1,23 @@
 import numpy as np
 import scipy.ndimage as ndimage
 
+from decimal import Decimal
 from typing import List, Optional, Generator
 
-from decimal import Decimal
+from app.tools.exceptions import NoChosenCoordsInDatasetException
 
 
 class Interpolator:
 
-    def __init__(self, raw_data: List[tuple], grid_resolution: float, bounding_box: tuple=None,
-                 chosen_boundary_coordinates: dict=None) -> None:
+    def __init__(self, raw_data: List[tuple], grid_resolution: float, bounding_box: tuple = None,
+                 chosen_boundary_coordinates: dict = None) -> None:
         self.raw_data = raw_data
         self.multiplifier = 1000
         self.grid_resolution = grid_resolution
 
         self.boundaries = self.__generate_boundaries(bounding_box, chosen_boundary_coordinates)
         self.possible_lon, self.possible_lat = self.__generate_chosen_coordinates()
-        self.regular_data, self.compliant_coordinates_boolean = self.__generate_regular_data()
+        self.regular_data = self.__generate_regular_data()
 
     def __generate_boundaries(self, bounding_box: Optional[tuple], chosen_boundary_coordinates: Optional[dict]) -> dict:
         if bounding_box and chosen_boundary_coordinates:
@@ -70,10 +71,11 @@ class Interpolator:
             lon, lat = row[:2]
             if lon in self.possible_lon and lat in self.possible_lat:
                 regular_data.append(row)
-        compliant_coordinates_boolean = True if regular_data else False
+        if not regular_data:
+            raise NoChosenCoordsInDatasetException
         regular_data = self.__fill_data_to_array_shape(regular_data)
         regular_data.sort(key=lambda x: (-x[0], x[1]))
-        return regular_data, compliant_coordinates_boolean
+        return regular_data
 
     def __fill_data_to_array_shape(self, regular_data: list):
         coordinates = [(row[:2]) for row in self.raw_data]
