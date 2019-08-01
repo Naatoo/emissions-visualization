@@ -77,19 +77,13 @@ def get_selected_data_str():
     return selected_data_str
 
 
-def assert_lon_lat_resolution_identical():
-    dataset_hash = app.config.get('CURRENT_DATA_HASH')
+def assert_lon_lat_resolution_identical(dataset_hash):
     data = DatasetInfo.query.filter_by(dataset_hash=dataset_hash).one()
     if float(data.lon_resolution) != float(data.lat_resolution):
         raise LonLatResolutionException
 
 
-def get_hash_of_first_dataset():
-    return DatasetInfo.query.all()[0].dataset_hash
-
-
-def get_boundary_values_for_dataset() -> dict:
-    dataset_hash = app.config.get('CURRENT_DATA_HASH')
+def get_boundary_values_for_dataset(dataset_hash: str) -> dict:
     lon_min = DatasetValues.query.filter_by(dataset_hash=dataset_hash).order_by(DatasetValues.lon).first().lon
     lon_max = DatasetValues.query.filter_by(dataset_hash=dataset_hash).order_by(DatasetValues.lon.desc()).first().lon
     lat_min = DatasetValues.query.filter_by(dataset_hash=dataset_hash).order_by(DatasetValues.lat).first().lat
