@@ -71,7 +71,10 @@ def get_selected_data_str():
     dataset_hash = app.config.get('CURRENT_DATA_HASH')
     if dataset_hash:
         metadata = get_data_metadata(dataset_hash)
-        selected_data_str = f"{metadata.name}, {metadata.physical_quantity}, {metadata.year}"
+        boundary_values = get_boundary_values_for_dataset(dataset_hash)
+        selected_data_str = f"{metadata.name}, {metadata.compound}, {metadata.year}, " \
+                            f"lon: {boundary_values['lon_min']} - {boundary_values['lon_max']}, " \
+                            f"lat: {boundary_values['lat_min']} - {boundary_values['lat_max']} "
     else:
         selected_data_str = None
     return selected_data_str
