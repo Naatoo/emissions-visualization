@@ -6,21 +6,8 @@
     <div class="form-row">
         <div class="form-group col-md-2">
             {% block content %}{% endblock %}
-            <div class="form-row">
-                <div class="form-group col-md-12">
-                    <div class="form-group">
-                        {{ form.zoom.label(for="zoom" )}}
-                        {{ form.zoom(class="form-control", id="zoom") }}
-                    </div>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-12">
-                    <div class="form-group">
-                        {{ form.interpolation_type.label(for="interpolation_type" )}}
-                        {{ form.interpolation_type(class="form-control", id="interpolation_type") }}
-                    </div>
-                </div>
+            <div>
+                {% block interpolation %}{% endblock %}
             </div>
             <div class="form-row">
                 <div class="form-group col-md-12">

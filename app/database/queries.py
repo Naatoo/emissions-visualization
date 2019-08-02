@@ -5,6 +5,7 @@ from sqlalchemy import and_
 
 from app.database.database import db
 from app.models.data_models import DatasetInfo, DatasetValues, Countries
+from app.tools.exceptions import LonLatResolutionException
 
 
 def insert_new_file_data(parser, **kwargs):
@@ -16,7 +17,8 @@ def insert_new_file_data(parser, **kwargs):
         unit=kwargs["unit"],
         year=kwargs["year"],
         name=kwargs["name"],
-        grid_resolution=kwargs["grid_resolution"]
+        lon_resolution=kwargs["lon_resolution"],
+        lat_resolution=kwargs["lat_resolution"],
     ))
     db.session.commit()
     for (lon, lat, value) in parser.rows_generator():
@@ -69,11 +71,24 @@ def get_selected_data_str():
     dataset_hash = app.config.get('CURRENT_DATA_HASH')
     if dataset_hash:
         metadata = get_data_metadata(dataset_hash)
-        selected_data_str = f"{metadata.name}, {metadata.physical_quantity}, {metadata.year}"
+        boundary_values = get_boundary_values_for_dataset(dataset_hash)
+        selected_data_str = f"{metadata.name}, {metadata.compound}, {metadata.year}, " \
+                            f"lon: {boundary_values['lon_min']} - {boundary_values['lon_max']}, " \
+                            f"lat: {boundary_values['lat_min']} - {boundary_values['lat_max']} "
     else:
         selected_data_str = None
     return selected_data_str
 
 
-def get_hash_of_first_dataset():
-    return DatasetInfo.query.all()[0].dataset_hash
+def assert_lon_lat_resolution_identical(dataset_hash):
+    data = DatasetInfo.query.filter_by(dataset_hash=dataset_hash).one()
+    if float(data.lon_resolution) != float(data.lat_resolution):
+        raise LonLatResolutionException
+
+
+def get_boundary_values_for_dataset(dataset_hash: str) -> dict:
+    lon_min = DatasetValues.query.filter_by(dataset_hash=dataset_hash).order_by(DatasetValues.lon).first().lon
+    lon_max = DatasetValues.query.filter_by(dataset_hash=dataset_hash).order_by(DatasetValues.lon.desc()).first().lon
+    lat_min = DatasetValues.query.filter_by(dataset_hash=dataset_hash).order_by(DatasetValues.lat).first().lat
+    lat_max = DatasetValues.query.filter_by(dataset_hash=dataset_hash).order_by(DatasetValues.lat.desc()).first().lat
+    return {"lon_min": lon_min, "lon_max": lon_max, "lat_min": lat_min, "lat_max": lat_max}

@@ -37,11 +37,13 @@
                 {{ form.year.label(for="year" )}}
                 {{ form.year(class="form-control", id="year", placeholder="e.g. µg/m3, t")}}
             </div>
-            <div class="form-row">
-                <div class="form-group col-md-12">
-                    {{ form.grid_resolution.label(for="grid_resolution" )}}
-                    {{ form.grid_resolution(class="form-control", id="grid_resolution", placeholder="e.g.: 1, 0.1, 0.05")}}
-                </div>
+            <div class="form-group col-md-6">
+                {{ form.lon_resolution.label(for="lon_resolution" )}}
+                {{ form.lon_resolution(class="form-control", id="lon_resolution", placeholder="e.g.: 1, 0.1, 0.05")}}
+            </div>
+            <div class="form-group col-md-6">
+                {{ form.lat_resolution.label(for="lat_resolution" )}}
+                {{ form.lat_resolution(class="form-control", id="lat_resolution", placeholder="e.g.: 1, 0.1, 0.05")}}
             </div>
             <div class="form-row">
                 <div class="form-group col-md-12">
