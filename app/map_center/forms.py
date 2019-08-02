@@ -14,13 +14,14 @@ def load_countries():
 
 class MapForm(FlaskForm):
     line_opacity = SelectField('Line opacity', validators=[DataRequired()],
-                            choices=[((round(val * 0.1, 1)), round((val * 0.1), 1)) for val in range(11)])
+                               choices=[((round(val * 0.1, 1)), round((val * 0.1), 1)) for val in range(11)])
     fill_opacity = SelectField('Fill opacity', validators=[DataRequired()],
-                            choices=[((round(val * 0.1, 1)), round((val * 0.1), 1)) for val in range(11)], default=0.7)
+                               choices=[((round(val * 0.1, 1)), round((val * 0.1), 1)) for val in range(11)],
+                               default=0.7)
     color = SelectField('Colors', choices=[(color, color) for color in [
-            'Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
-            'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
-            'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn']], default="Oranges")
+        'Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
+        'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
+        'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn']], default="Oranges")
     submit = SubmitField('Refresh')
 
 
@@ -39,4 +40,4 @@ class LatLonForm(InterpolationForm):
 
 
 class CountryForm(InterpolationForm):
-    country = SelectField('Country', choices=[(code, country) for (country, code) in load_countries()])
+    country = SelectField('Country', choices=[(code, country) for (country, code) in load_countries()], default="PL")

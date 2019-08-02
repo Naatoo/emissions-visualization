@@ -1,4 +1,4 @@
-from flask import current_app as app, flash
+from flask import current_app as app, flash, request
 from flask import render_template, redirect, url_for
 
 from app.database.queries import get_selected_data_str, get_dataset, get_data_metadata, \
@@ -17,9 +17,24 @@ def map_by_country():
     name = 'map_by_country'
     form = CountryForm()
     option = "country"
+    if request.args and request.method == "GET":
+        form.color.default = request.args.get("color")
+        form.fill_opacity.default = request.args.get("fill_opacity")
+        form.line_opacity.default = request.args.get("line_opacity")
+        form.interpolation_type.default = request.args.get("interpolation_type")
+        form.zoom.default = request.args.get("zoom")
+        form.country.default = request.args.get("country")
+        form.process()
     if form.is_submitted():
         generate_map(form, option, name)
-        return redirect(url_for(f"map_center.{name}"))
+        return redirect(url_for(f"map_center.{name}",
+                                color=form.color.data,
+                                fill_opacity=form.fill_opacity.data,
+                                line_opacity=form.line_opacity.data,
+                                zoom=form.zoom.data,
+                                interpolation_type=form.interpolation_type.data,
+                                country=form.country.data,
+                                ))
     selected_data_str = get_selected_data_str()
     map_exists = True if "m" in globals() else False
     return render_template(f"{name}.html", form=form, selected_data_str=selected_data_str, map_exists=map_exists)
@@ -30,9 +45,30 @@ def map_by_coordinates():
     name = 'map_by_coordinates'
     form = LatLonForm()
     option = "coordinates"
+    if request.args and request.method == "GET":
+        form.color.default = request.args.get("color")
+        form.fill_opacity.default = request.args.get("fill_opacity")
+        form.line_opacity.default = request.args.get("line_opacity")
+        form.interpolation_type.default = request.args.get("interpolation_type")
+        form.zoom.default = request.args.get("zoom")
+        form.lon_min.default = float(request.args.get("lon_min"))
+        form.lon_max.default = float(request.args.get("lon_max"))
+        form.lat_min.default = float(request.args.get("lat_min"))
+        form.lat_max.default = float(request.args.get("lat_max"))
+        form.process()
     if form.is_submitted():
         generate_map(form, option, name)
-        return redirect(url_for(f"map_center.{name}"))
+        return redirect(url_for(f"map_center.{name}",
+                                color=form.color.data,
+                                fill_opacity=form.fill_opacity.data,
+                                line_opacity=form.line_opacity.data,
+                                zoom=form.zoom.data,
+                                interpolation_type=form.interpolation_type.data,
+                                lon_min=form.lon_min.data,
+                                lon_max=form.lon_max.data,
+                                lat_min=form.lat_min.data,
+                                lat_max=form.lat_max.data,
+                                ))
     selected_data_str = get_selected_data_str()
     map_exists = True if "m" in globals() else False
     return render_template(f"{name}.html", form=form, selected_data_str=selected_data_str, map_exists=map_exists)
@@ -43,9 +79,18 @@ def map_whole_dataset():
     name = 'map_whole_dataset'
     form = MapForm()
     option = "whole_dataset"
+    if request.args and request.method == "GET":
+        form.color.default = request.args.get("color")
+        form.fill_opacity.default = request.args.get("fill_opacity")
+        form.line_opacity.default = request.args.get("line_opacity")
+        form.process()
     if form.is_submitted():
         generate_map(form, option, name)
-        return redirect(url_for(f"map_center.{name}"))
+        return redirect(url_for(f"map_center.{name}",
+                                color=form.color.data,
+                                fill_opacity=form.fill_opacity.data,
+                                line_opacity=form.line_opacity.data,
+                                ))
     selected_data_str = get_selected_data_str()
     map_exists = True if "m" in globals() else False
     return render_template("map_base.html", form=form, selected_data_str=selected_data_str, map_exists=map_exists)
@@ -99,7 +144,7 @@ def generate_map(form, option, name):
                                                             order=order,
                                                             zoom_value=zoom_values,
                                                             country_code=country_code)
-            
+
         except NoChosenCoordsInDatasetException:
             if "m" in globals():
                 del m
