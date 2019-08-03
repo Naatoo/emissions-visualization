@@ -26,7 +26,7 @@ class Interpolator:
         elif bounding_box:
             boundaries = self.__generate_boundaries_by_country(bounding_box)
         elif chosen_boundary_coordinates:
-            boundaries = chosen_boundary_coordinates
+            boundaries = self.__generate_boundaries_by_coordinates(chosen_boundary_coordinates)
         else:
             raise ValueError("Both parameters (bounding_box and chosen_boundary_coordinates) cannot be None")
         boundaries = {key: int(value * self.multiplifier) for key, value in boundaries.items()}
@@ -42,6 +42,22 @@ class Interpolator:
             possible_coords = [coord_int + pos if coord_int > 0 else coord_int - pos for pos in format_iterable]
             final_value = self.find_nearest(possible_coords, bound_coord)
             boundary_coordinates[key] = final_value
+        return boundary_coordinates
+
+    def __generate_boundaries_by_coordinates(self, chosen_coords: dict) -> dict:
+        boundary_coordinates = {}
+        for coord in "min", "max":
+            dataset_lon = [item[0] for item in self.raw_data]
+            boundary_coordinates[f"lon_{coord}"] = self.find_nearest(dataset_lon, float(chosen_coords[f"lon_{coord}"]))
+            dataset_lat = [item[1] for item in self.raw_data if item[0] == boundary_coordinates["lon_min"]]
+            boundary_coordinates[f"lat_{coord}"] = self.find_nearest(dataset_lat, float(chosen_coords[f"lat_{coord}"]))
+
+        cond = any((any((boundary_coordinates["lon_max"] < chosen_coords["lon_min"],
+                         boundary_coordinates["lon_min"] > chosen_coords["lon_max"])),
+                    any((boundary_coordinates["lon_max"] < chosen_coords["lon_min"],
+                         boundary_coordinates["lat_min"] > chosen_coords["lat_max"]))))
+        if cond:
+            raise NoChosenCoordsInDatasetException
         return boundary_coordinates
 
     def __get_lon_lat_format(self) -> Generator[list, None, None]:
@@ -71,8 +87,6 @@ class Interpolator:
             lon, lat = row[:2]
             if lon in self.possible_lon and lat in self.possible_lat:
                 regular_data.append(row)
-        if not regular_data:
-            raise NoChosenCoordsInDatasetException
         regular_data = self.__fill_data_to_array_shape(regular_data)
         regular_data.sort(key=lambda x: (-x[0], x[1]))
         return regular_data
