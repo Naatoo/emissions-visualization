@@ -1,6 +1,6 @@
 import pandas
 
-from typing import Generator, Tuple
+from typing import Generator
 
 from app.data_center.loader.generic_parser import GenericParser
 
@@ -14,7 +14,7 @@ class ExcelFileParser(GenericParser):
 
     def _get_rows(self) -> Generator[tuple, None, None]:
         data = pandas.read_excel(self.file_name).to_dict('list')
-        return ((lon, lat, value) for lon, lat, value in zip(data['lon'], data['lat'], data['value']))
+        yield from zip(data['lon'], data['lat'], data['value'])
 
     @property
     def sheet_names(self):
