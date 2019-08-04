@@ -67,6 +67,11 @@ def get_country_centroid(code: str) -> tuple:
     return data.centroid_lat, data.centroid_lon
 
 
+def get_country_name(code: str) -> str:
+    data = Countries.query.filter_by(code=code).one()
+    return data.name
+
+
 def get_selected_data_str():
     dataset_hash = app.config.get('CURRENT_DATA_HASH')
     if dataset_hash:

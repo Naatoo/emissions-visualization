@@ -2,7 +2,8 @@ from flask import current_app as app, flash, request
 from flask import render_template, redirect, url_for
 
 from app.database.queries import get_selected_data_str, get_dataset, get_data_metadata, \
-    get_country_bounding_box, get_country_centroid, assert_lon_lat_resolution_identical, get_boundary_values_for_dataset
+    get_country_bounding_box, get_country_centroid, assert_lon_lat_resolution_identical, \
+    get_boundary_values_for_dataset, get_country_name
 from app.map_center import map_center
 from app.map_center.data_files_creator import DataFilesCreator
 from app.map_center.forms import LatLonForm, CountryForm, MapForm
@@ -127,6 +128,7 @@ def generate_map(form, option, name):
             boundaries = None
             country_code = form.country.data
             default_location = get_country_centroid(form.country.data)
+            success_message = f"country={get_country_name(country_code)}"
         else:
             boundaries = {
                 "lon_min": form.lon_min.data,
@@ -136,15 +138,14 @@ def generate_map(form, option, name):
             }
             default_location = generate_coordinates_center(**boundaries)
             country_code = None
-        zoom_values = int(form.zoom.data)
+        zoom_value = int(form.zoom.data)
         order = int(form.interpolation_type.data)
         try:
-            create_files_for_choropleths_with_interpolation(dataset_hash=dataset_hash,
-                                                            boundaries=boundaries,
-                                                            order=order,
-                                                            zoom_value=zoom_values,
-                                                            country_code=country_code)
-
+            final_boundaries = create_files_for_choropleths_with_interpolation_get_boundaries(dataset_hash=dataset_hash,
+                                                                                              boundaries=boundaries,
+                                                                                              order=order,
+                                                                                              zoom_value=zoom_value,
+                                                                                              country_code=country_code)
         except NoChosenCoordsInDatasetException:
             if "m" in globals():
                 del m
@@ -155,14 +156,25 @@ def generate_map(form, option, name):
         data_boundary_coords = get_boundary_values_for_dataset(dataset_hash)
         default_location = generate_coordinates_center(**data_boundary_coords)
 
+    if option in ("coordinates", "whole_dataset"):
+        coordinates_str = f"Longitude=({final_boundaries['lon_min']}, {final_boundaries['lon_max']}), " \
+                          f"Latitude=({final_boundaries['lat_min']}, {final_boundaries['lat_max']})"
+        success_message = f"Coordinates=[{coordinates_str}]"
+
+    if option in ("coordinates", "country"):
+        interpolation_name = dict(form.interpolation_type.choices).get(int(form.interpolation_type.data))
+        success_message = f"{success_message}, Zoom={zoom_value}, Interpolation={interpolation_name}"
+
     m = MapCreator(fill_color=fill_color,
                    fill_opacity=fill_opacity,
                    line_opacity=line_opacity,
                    default_location=default_location).map
+    flash(f"Map generated for {success_message}", category="success")
 
 
-def create_files_for_choropleths_with_interpolation(dataset_hash: str, zoom_value: int, order: int,
-                                                    boundaries: dict = None, country_code: str = None) -> None:
+def create_files_for_choropleths_with_interpolation_get_boundaries(dataset_hash: str, zoom_value: int, order: int,
+                                                                   boundaries: dict = None, country_code: str = None)\
+                                                                   -> dict:
     row_data, lon_resolution, lat_resolution, bounding_box = prepare_data_for_interpolation(dataset_hash, country_code)
     interpolator = Interpolator(row_data, lon_resolution, bounding_box=bounding_box,
                                 chosen_boundary_coordinates=boundaries)
@@ -171,6 +183,7 @@ def create_files_for_choropleths_with_interpolation(dataset_hash: str, zoom_valu
     map_files_creator = DataFilesCreator(interpolated_coordinates, interpolated_values, lon_resolution, lat_resolution,
                                          zoom_value, country_code)
     map_files_creator.create_files()
+    return interpolator.boundaries
 
 
 def prepare_data_for_interpolation(dataset_hash: str, country_code: str = None):

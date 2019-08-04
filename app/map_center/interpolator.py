@@ -16,6 +16,7 @@ class Interpolator:
         self.grid_resolution = grid_resolution
 
         self.boundaries = self.__generate_boundaries(bounding_box, chosen_boundary_coordinates)
+        self.multiplified_boundaries = self.multiplify_boundaries()
         self.possible_lon, self.possible_lat = self.__generate_chosen_coordinates()
         self.regular_data = self.__generate_regular_data()
 
@@ -29,7 +30,6 @@ class Interpolator:
             boundaries = self.__generate_boundaries_by_coordinates(chosen_boundary_coordinates)
         else:
             raise ValueError("Both parameters (bounding_box and chosen_boundary_coordinates) cannot be None")
-        boundaries = {key: int(value * self.multiplifier) for key, value in boundaries.items()}
         return boundaries
 
     def __generate_boundaries_by_country(self, bounding_box: Optional[tuple]) -> dict:
@@ -73,10 +73,13 @@ class Interpolator:
         nearest_id = diffs.index(min(diffs))
         return iterable[nearest_id]
 
+    def multiplify_boundaries(self):
+        return {key: int(value * self.multiplifier) for key, value in self.boundaries.items()}
+
     def __generate_chosen_coordinates(self):
         possible_coords = [
-            [x / self.multiplifier for x in range(self.boundaries[coord + "_min"],
-                                                  self.boundaries[coord + "_max"] + 1,
+            [x / self.multiplifier for x in range(self.multiplified_boundaries[coord + "_min"],
+                                                  self.multiplified_boundaries[coord + "_max"] + 1,
                                                   int(self.grid_resolution * self.multiplifier))]
             for coord in ("lon", "lat")]
         return possible_coords
@@ -117,8 +120,8 @@ class Interpolator:
         grid_step = int(self.multiplifier * 10 ** exponent / zoom_value) \
             if exponent != 0 else int(self.multiplifier / zoom_value)
         final_lon_iterable, final_lat_iterable = \
-            ([x / self.multiplifier for x in range(self.boundaries[coord + "_min"] - coords_coeff,
-                                                   self.boundaries[coord + "_max"] + coords_coeff + 1,
+            ([x / self.multiplifier for x in range(self.multiplified_boundaries[coord + "_min"] - coords_coeff,
+                                                   self.multiplified_boundaries[coord + "_max"] + coords_coeff + 1,
                                                    grid_step)]
              for coord in ["lon", "lat"])
         final_coords = []
