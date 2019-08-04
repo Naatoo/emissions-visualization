@@ -169,7 +169,8 @@ def generate_map(form, option, name):
 
     if option in ("coordinates", "country"):
         interpolation_name = dict(form.interpolation_type.choices).get(int(form.interpolation_type.data))
-        success_message = f"{success_message}, Zoom={zoom_value}, Interpolation={interpolation_name}"
+        zoom_name = dict(form.zoom.choices).get(int(form.zoom.data))
+        success_message = f"{success_message}, Zoom={zoom_name}, Interpolation={interpolation_name}"
 
     m = MapCreator(fill_color=fill_color,
                    fill_opacity=fill_opacity,
