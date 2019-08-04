@@ -8,4 +8,4 @@ def homepage():
     """
     Redirect to /login
     """
-    return redirect(url_for('map_center.map_by_country'))
+    return redirect(url_for('data_center_select.choose_data'))

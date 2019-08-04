@@ -67,16 +67,21 @@ def get_country_centroid(code: str) -> tuple:
     return data.centroid_lat, data.centroid_lon
 
 
+def get_country_name(code: str) -> str:
+    data = Countries.query.filter_by(code=code).one()
+    return data.name
+
+
 def get_selected_data_str():
     dataset_hash = app.config.get('CURRENT_DATA_HASH')
     if dataset_hash:
         metadata = get_data_metadata(dataset_hash)
         boundary_values = get_boundary_values_for_dataset(dataset_hash)
-        selected_data_str = f"{metadata.name}, {metadata.compound}, {metadata.year}, " \
-                            f"lon: {boundary_values['lon_min']} - {boundary_values['lon_max']}, " \
-                            f"lat: {boundary_values['lat_min']} - {boundary_values['lat_max']} "
+        selected_data_str = f"Selected data: {metadata.name}, {metadata.compound}, {metadata.year}, " \
+                            f"Longitude=({boundary_values['lon_min']}, {boundary_values['lon_max']}), " \
+                            f"Latitude=({boundary_values['lat_min']},{boundary_values['lat_max']})"
     else:
-        selected_data_str = None
+        selected_data_str = "No data selected"
     return selected_data_str
 
 
