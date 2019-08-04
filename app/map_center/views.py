@@ -18,6 +18,7 @@ def map_by_country():
     name = 'map_by_country'
     form = CountryForm()
     option = "country"
+    form_sent = False
     if request.args and request.method == "GET":
         form.color.default = request.args.get("color")
         form.fill_opacity.default = request.args.get("fill_opacity")
@@ -26,6 +27,7 @@ def map_by_country():
         form.zoom.default = request.args.get("zoom")
         form.country.default = request.args.get("country")
         form.process()
+        form_sent = True
     if form.is_submitted():
         generate_map(form, option, name)
         return redirect(url_for(f"map_center.{name}",
@@ -37,7 +39,7 @@ def map_by_country():
                                 country=form.country.data,
                                 ))
     selected_data_str = get_selected_data_str()
-    map_exists = True if "m" in globals() else False
+    map_exists = True if "m" in globals() and form_sent else False
     return render_template(f"{name}.html", form=form, selected_data_str=selected_data_str, map_exists=map_exists)
 
 
@@ -46,6 +48,7 @@ def map_by_coordinates():
     name = 'map_by_coordinates'
     form = LatLonForm()
     option = "coordinates"
+    form_sent = False
     if request.args and request.method == "GET":
         form.color.default = request.args.get("color")
         form.fill_opacity.default = request.args.get("fill_opacity")
@@ -57,6 +60,7 @@ def map_by_coordinates():
         form.lat_min.default = float(request.args.get("lat_min"))
         form.lat_max.default = float(request.args.get("lat_max"))
         form.process()
+        form_sent = True
     if form.is_submitted():
         generate_map(form, option, name)
         return redirect(url_for(f"map_center.{name}",
@@ -71,7 +75,7 @@ def map_by_coordinates():
                                 lat_max=form.lat_max.data,
                                 ))
     selected_data_str = get_selected_data_str()
-    map_exists = True if "m" in globals() else False
+    map_exists = True if "m" in globals() and form_sent else False
     return render_template(f"{name}.html", form=form, selected_data_str=selected_data_str, map_exists=map_exists)
 
 
@@ -80,11 +84,13 @@ def map_whole_dataset():
     name = 'map_whole_dataset'
     form = MapForm()
     option = "whole_dataset"
+    form_sent = False
     if request.args and request.method == "GET":
         form.color.default = request.args.get("color")
         form.fill_opacity.default = request.args.get("fill_opacity")
         form.line_opacity.default = request.args.get("line_opacity")
         form.process()
+        form_sent = True
     if form.is_submitted():
         generate_map(form, option, name)
         return redirect(url_for(f"map_center.{name}",
@@ -93,7 +99,7 @@ def map_whole_dataset():
                                 line_opacity=form.line_opacity.data,
                                 ))
     selected_data_str = get_selected_data_str()
-    map_exists = True if "m" in globals() else False
+    map_exists = True if "m" in globals() and form_sent else False
     return render_template("map_base.html", form=form, selected_data_str=selected_data_str, map_exists=map_exists)
 
 
@@ -120,7 +126,7 @@ def generate_map(form, option, name):
             assert_lon_lat_resolution_identical(dataset_hash)
         except LonLatResolutionException:
             flash(f"Longitude and latitude resolution is not equal. Interpolation impossible. "
-                  f"Please choose 'show all data' mode {option}", category="warning")
+                  f"Please choose 'Whole dataset' mode.", category="warning")
             return redirect(url_for(f"map_center.map_by_{option}"))
 
         if option == "country":
@@ -153,8 +159,8 @@ def generate_map(form, option, name):
             return redirect(url_for(f"map_center.map_by_{option}"))
     else:
         create_files_for_choropleths_whole_dataset(dataset_hash)
-        data_boundary_coords = get_boundary_values_for_dataset(dataset_hash)
-        default_location = generate_coordinates_center(**data_boundary_coords)
+        final_boundaries = get_boundary_values_for_dataset(dataset_hash)
+        default_location = generate_coordinates_center(**final_boundaries)
 
     if option in ("coordinates", "whole_dataset"):
         coordinates_str = f"Longitude=({final_boundaries['lon_min']}, {final_boundaries['lon_max']}), " \
@@ -169,7 +175,7 @@ def generate_map(form, option, name):
                    fill_opacity=fill_opacity,
                    line_opacity=line_opacity,
                    default_location=default_location).map
-    flash(f"Map generated for {success_message}", category="success")
+    flash(f"Map generated for {success_message}.", category="success")
 
 
 def create_files_for_choropleths_with_interpolation_get_boundaries(dataset_hash: str, zoom_value: int, order: int,

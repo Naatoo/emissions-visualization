@@ -33,10 +33,10 @@ class InterpolationForm(MapForm):
 
 
 class LatLonForm(InterpolationForm):
-    lon_max = DecimalField('Longitude End', validators=[DataRequired()], default=20)
-    lon_min = DecimalField('Longitude Start', validators=[DataRequired()], default=10)
-    lat_min = DecimalField('Latitude Start', validators=[DataRequired()], default=40.9)
-    lat_max = DecimalField('Latitude End', validators=[DataRequired()], default=50.9)
+    lon_min = DecimalField('Longitude Start', validators=[DataRequired()])
+    lon_max = DecimalField('Longitude End', validators=[DataRequired()])
+    lat_min = DecimalField('Latitude Start', validators=[DataRequired()])
+    lat_max = DecimalField('Latitude End', validators=[DataRequired()])
 
 
 class CountryForm(InterpolationForm):
