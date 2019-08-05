@@ -6,6 +6,7 @@ from sqlalchemy import and_
 from app.database.database import db
 from app.models.dataset import DatasetInfo, DatasetValues
 from app.models.countries import Countries
+from app.models.auth import User
 from app.tools.exceptions import LonLatResolutionException
 
 
@@ -98,3 +99,13 @@ def get_boundary_values_for_dataset(dataset_hash: str) -> dict:
     lat_min = DatasetValues.query.filter_by(dataset_hash=dataset_hash).order_by(DatasetValues.lat).first().lat
     lat_max = DatasetValues.query.filter_by(dataset_hash=dataset_hash).order_by(DatasetValues.lat.desc()).first().lat
     return {"lon_min": lon_min, "lon_max": lon_max, "lat_min": lat_min, "lat_max": lat_max}
+
+
+def get_user(username: str):
+    user = User.query.filter_by(username=username).first()
+    return user
+
+#
+# def insert_user(username, password):
+#     db.session.add(User(username=username, password=password))
+#     db.session.commit()
