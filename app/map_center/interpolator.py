@@ -73,10 +73,10 @@ class Interpolator:
         nearest_id = diffs.index(min(diffs))
         return iterable[nearest_id]
 
-    def multiplify_boundaries(self):
+    def multiplify_boundaries(self) -> dict:
         return {key: int(value * self.multiplifier) for key, value in self.boundaries.items()}
 
-    def __generate_chosen_coordinates(self):
+    def __generate_chosen_coordinates(self) -> list:
         possible_coords = [
             [x / self.multiplifier for x in range(self.multiplified_boundaries[coord + "_min"],
                                                   self.multiplified_boundaries[coord + "_max"] + 1,
@@ -84,18 +84,23 @@ class Interpolator:
             for coord in ("lon", "lat")]
         return possible_coords
 
-    def __generate_regular_data(self):
+    def __generate_regular_data(self) -> list:
+        grid_res_decimal_places = len(str(self.grid_resolution).split('.')[1]) \
+            if "." in str(self.grid_resolution) else 0
         regular_data = []
-        for row in self.raw_data:
+        rounded_raw_data = [(round(row[0], grid_res_decimal_places),
+                             round(row[1], grid_res_decimal_places),
+                             row[2]) for row in self.raw_data]
+        for row in rounded_raw_data:
             lon, lat = row[:2]
             if lon in self.possible_lon and lat in self.possible_lat:
-                regular_data.append(row)
-        regular_data = self.__fill_data_to_array_shape(regular_data)
+                regular_data.append((lon, lat, row[2]))
+        regular_data = self.__fill_data_to_array_shape(regular_data, rounded_raw_data)
         regular_data.sort(key=lambda x: (-x[0], x[1]))
         return regular_data
 
-    def __fill_data_to_array_shape(self, regular_data: list):
-        coordinates = [(row[:2]) for row in self.raw_data]
+    def __fill_data_to_array_shape(self, regular_data: list, rounded_raw_data: list) -> list:
+        coordinates = [(row[:2]) for row in rounded_raw_data]
         for lon in self.possible_lon:
             for lat in self.possible_lat:
                 if (lon, lat) not in coordinates:
@@ -114,7 +119,7 @@ class Interpolator:
         flatten = zoomed.flatten()
         return flatten
 
-    def zoom_coordinates(self, zoom_value: int):
+    def zoom_coordinates(self, zoom_value: int) -> list:
         coords_coeff = int(self.grid_resolution / zoom_value / 2 * self.multiplifier) * (zoom_value - 1)
         exponent = self.__get_exponent(self.grid_resolution)
         grid_step = int(self.multiplifier * 10 ** exponent / zoom_value) \
