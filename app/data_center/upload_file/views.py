@@ -1,4 +1,5 @@
 from flask import render_template, redirect, url_for, flash
+from flask_login import login_required
 from werkzeug.utils import secure_filename
 
 from app.data_center.loader.emep_txt_parser import EmepTxtFileParser
@@ -10,6 +11,7 @@ from app.tools.paths import UPLOADED_FILE
 
 
 @data_center_upload_file.route('/data_center/upload_file', methods=['GET', 'POST'])
+@login_required
 def upload_file():
     form = UploadFileForm()
     if form.is_submitted():
