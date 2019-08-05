@@ -6,7 +6,7 @@ from app.database.database import db
 class DatasetValues(db.Model):
     __tablename__ = 'data_values'
     id = db.Column(db.Integer, primary_key=True)
-    dataset_hash = db.Column(db.String(32), FaoreignKey('data_info.dataset_hash'))
+    dataset_hash = db.Column(db.String(32), ForeignKey('data_info.dataset_hash'))
     lon = db.Column(db.Float)
     lat = db.Column(db.Float)
     value = db.Column(db.Float)
