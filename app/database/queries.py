@@ -4,7 +4,8 @@ from flask import current_app as app
 from sqlalchemy import and_
 
 from app.database.database import db
-from app.models.data_models import DatasetInfo, DatasetValues, Countries
+from app.models.dataset import DatasetInfo, DatasetValues
+from app.models.countries import Countries
 from app.tools.exceptions import LonLatResolutionException
 
 

@@ -14,7 +14,7 @@ from app.database.database import db
 from .data_center.loader.excel_parser import ExcelFileParser
 from .data_center.loader.emep_txt_parser import EmepTxtFileParser
 from app.tools.paths import EUROPE_EMISSION_PM10_2015_EXCEL_FILE, COUNTRIES_CENTROIDS_CSV, PM10_RAW_FILE
-from app.models.data_models import DatasetValues, DatasetInfo
+from app.models.dataset import DatasetValues, DatasetInfo
 from app.tools.paths import DATABASE_FILE
 
 
