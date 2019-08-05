@@ -2,7 +2,7 @@ import pandas
 import json
 
 from app.database.database import db
-from app.models.data_models import Countries
+from app.models.countries import Countries
 
 from app.tools.paths import COUNTRIES_CENTROIDS_CSV, BOUNDING_BOXES_JSON
 

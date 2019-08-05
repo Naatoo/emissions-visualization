@@ -1,4 +1,5 @@
 from flask import render_template, redirect, url_for, flash
+from flask_login import login_required
 
 from app.data_center.loader.emep_txt_parser import EmepTxtFileParser
 from app.data_center.loader.excel_parser import ExcelFileParser
@@ -9,6 +10,7 @@ from app.tools.paths import UPLOADED_FILE
 
 
 @data_center_add_data.route('/data_center/add_data/<string:file_type>', methods=['GET', 'POST'])
+@login_required
 def add_data(file_type):
     parsers_mapping = {
         "xlsx": ExcelFileParser,

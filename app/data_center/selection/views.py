@@ -1,12 +1,14 @@
 from flask import render_template, redirect, url_for, request, flash
 from flask import current_app as app
+from flask_login import login_required
 
 from app.data_center.selection import data_center_select
 from app.database.queries import delete_data, get_data_metadata, get_selected_data_str
-from app.models.data_models import DatasetInfo
+from app.models.dataset import DatasetInfo
 
 
 @data_center_select.route('/data_center/select', methods=['GET', 'POST'])
+@login_required
 def choose_data():
     delete_data = {}
     delete_hash = request.args.get('delete_hash')
@@ -27,18 +29,21 @@ def choose_data():
 
 
 @data_center_select.route('/data_center/select/<string:value>', methods=['GET', 'POST'])
+@login_required
 def select(value):
     app.config['CURRENT_DATA_HASH'] = value
     return redirect(url_for("data_center_select.choose_data"))
 
 
 @data_center_select.route('/data_center/delete/<string:value>', methods=['GET', 'POST'])
+@login_required
 def delete(value):
     # TODO set default data hash
     return redirect(url_for("data_center_select.choose_data", delete_hash=value))
 
 
 @data_center_select.route('/data_center/delete/<string:value>/confirm', methods=['GET', 'POST'])
+@login_required
 def confirm_delete(value):
     # TODO set default data hash
     metadata = get_data_metadata(value)

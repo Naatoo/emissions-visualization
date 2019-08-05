@@ -1,5 +1,6 @@
 from flask import current_app as app, flash, request
 from flask import render_template, redirect, url_for
+from flask_login import login_required
 
 from app.database.queries import get_selected_data_str, get_dataset, get_data_metadata, \
     get_country_bounding_box, get_country_centroid, assert_lon_lat_resolution_identical, \
@@ -14,6 +15,7 @@ from app.tools.exceptions import LonLatResolutionException, NoChosenCoordsInData
 
 
 @map_center.route('/map_by_country', methods=['GET', 'POST'])
+@login_required
 def map_by_country():
     name = 'map_by_country'
     form = CountryForm()
@@ -44,6 +46,7 @@ def map_by_country():
 
 
 @map_center.route('/map_by_coordinates', methods=['GET', 'POST'])
+@login_required
 def map_by_coordinates():
     name = 'map_by_coordinates'
     form = LatLonForm()
@@ -80,6 +83,7 @@ def map_by_coordinates():
 
 
 @map_center.route('/map_whole_dataset', methods=['GET', 'POST'])
+@login_required
 def map_whole_dataset():
     name = 'map_whole_dataset'
     form = MapForm()
@@ -104,6 +108,7 @@ def map_whole_dataset():
 
 
 @map_center.route('/map_render')
+@login_required
 def map_render():
     return m.get_root().render()
 
