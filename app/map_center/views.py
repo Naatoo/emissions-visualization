@@ -14,7 +14,7 @@ from app.map_center.utils import generate_coordinates_center
 from app.tools.exceptions import LonLatResolutionException, NoChosenCoordsInDatasetException
 
 
-@map_center.route('/map_by_country', methods=['GET', 'POST'])
+@map_center.route('/map/country', methods=['GET', 'POST'])
 @login_required
 def map_by_country():
     name = 'map_by_country'
@@ -45,7 +45,7 @@ def map_by_country():
     return render_template(f"{name}.html", form=form, selected_data_str=selected_data_str, map_exists=map_exists)
 
 
-@map_center.route('/map_by_coordinates', methods=['GET', 'POST'])
+@map_center.route('/map/coordinates', methods=['GET', 'POST'])
 @login_required
 def map_by_coordinates():
     name = 'map_by_coordinates'
@@ -82,7 +82,7 @@ def map_by_coordinates():
     return render_template(f"{name}.html", form=form, selected_data_str=selected_data_str, map_exists=map_exists)
 
 
-@map_center.route('/map_whole_dataset', methods=['GET', 'POST'])
+@map_center.route('/map/dataset', methods=['GET', 'POST'])
 @login_required
 def map_whole_dataset():
     name = 'map_whole_dataset'
