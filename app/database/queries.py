@@ -21,6 +21,7 @@ def insert_new_file_data(parser, **kwargs):
         name=kwargs["name"],
         lon_resolution=kwargs["lon_resolution"],
         lat_resolution=kwargs["lat_resolution"],
+        relative_data=kwargs["relative_data"],
     ))
     db.session.commit()
     for (lon, lat, value) in parser.rows_generator():

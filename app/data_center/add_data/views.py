@@ -27,6 +27,7 @@ def add_data(file_type):
         year = form.year.data
         lon_resolution = form.lon_resolution.data
         lat_resolution = form.lat_resolution.data
+        relative_data = True if form.relative_data.data else False
         metadata = {
             "name": name,
             "compound": compound,
@@ -34,7 +35,8 @@ def add_data(file_type):
             "unit": unit,
             "year": year,
             "lon_resolution": lon_resolution,
-            "lat_resolution": lat_resolution
+            "lat_resolution": lat_resolution,
+            "relative_data": relative_data
         }
         insert_new_file_data(parser, **metadata)
         flash(f"ADDED: {name} of {physical_quantity} from year {year}.", category='success')

@@ -12,8 +12,9 @@ class AddDataForm(FlaskForm):
     compound = StringField('Compound', validators=[DataRequired()])
     physical_quantity = StringField('Physical quantity', validators=[DataRequired()])
     unit = StringField('Unit', validators=[DataRequired()])
-    year = SelectField('Year', validators=[DataRequired()],
-                       choices=[(year, year) for year in range(1900, 2101)], default=2015)
+    year = StringField('Year', validators=[DataRequired()])
     lon_resolution = DecimalField('Longitude resolution', validators=[DataRequired()])
     lat_resolution = DecimalField('Latitude resolution', validators=[DataRequired()])
+    relative_data = SelectField('Relative data', validators=[DataRequired()], choices=[(1, 'Yes'), (0, 'No')],
+                                default=1)
     submit = SubmitField('Submit')

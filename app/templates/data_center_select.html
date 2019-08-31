@@ -68,6 +68,7 @@ button.confirm-delete {
         <th scope="col" class="year">Year</th>
         <th scope="col" class="lon-resolution">Longitude resolution</th>
         <th scope="col" class="lat-resolution">Latitude resolution</th>
+        <th scope="col" class="relative-data">Relative data</th>
         <th scope="col" class="select">Select</th>
         <th scope="col" class="delete">Delete</th>
     </tr>
@@ -83,6 +84,7 @@ button.confirm-delete {
         <td>{{ row[5] }}</td>
         <td>{{ row[6] }}</td>
         <td>{{ row[7] }}</td>
+        <td>{{ row[8] }}</td>
         <td>
             <form method="post" action="{{ url_for('data_center_select.select', value=row[0]) }}">
                 <button type="submit">Select</button>
