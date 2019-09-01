@@ -4,17 +4,18 @@ from flask_login import login_required
 
 from app.database.queries import get_selected_data_str, get_dataset, get_data_metadata, \
     get_country_bounding_box, get_country_centroid, assert_lon_lat_resolution_identical, \
-    get_boundary_values_for_dataset, get_country_name
+    get_boundary_values_for_dataset, get_country_name, assert_zooming_relative_data
 from app.map_center import map_center
 from app.map_center.data_files_creator import DataFilesCreator
 from app.map_center.forms import LatLonForm, CountryForm, MapForm
 from app.map_center.map_creator import MapCreator
 from app.map_center.interpolator import Interpolator
 from app.map_center.utils import generate_coordinates_center
-from app.tools.exceptions import LonLatResolutionException, NoChosenCoordsInDatasetException
+from app.tools.exceptions import LonLatResolutionException, NoChosenCoordsInDatasetException, \
+    ZoomingRelativeDataException
 
 
-@map_center.route('/map_by_country', methods=['GET', 'POST'])
+@map_center.route('/map/country', methods=['GET', 'POST'])
 @login_required
 def map_by_country():
     name = 'map_by_country'
@@ -45,7 +46,7 @@ def map_by_country():
     return render_template(f"{name}.html", form=form, selected_data_str=selected_data_str, map_exists=map_exists)
 
 
-@map_center.route('/map_by_coordinates', methods=['GET', 'POST'])
+@map_center.route('/map/coordinates', methods=['GET', 'POST'])
 @login_required
 def map_by_coordinates():
     name = 'map_by_coordinates'
@@ -82,7 +83,7 @@ def map_by_coordinates():
     return render_template(f"{name}.html", form=form, selected_data_str=selected_data_str, map_exists=map_exists)
 
 
-@map_center.route('/map_whole_dataset', methods=['GET', 'POST'])
+@map_center.route('/map/dataset', methods=['GET', 'POST'])
 @login_required
 def map_whole_dataset():
     name = 'map_whole_dataset'
@@ -127,15 +128,19 @@ def generate_map(form, option, name):
     line_opacity = form.line_opacity.data
 
     if option in ("country", "coordinates"):
+
         try:
+            assert_zooming_relative_data(dataset_hash, int(form.zoom.data))
             assert_lon_lat_resolution_identical(dataset_hash)
+        except ZoomingRelativeDataException:
+            flash(f"Zoomed data must be relative. Turn off zoom to visualise this dataset.", category="warning")
+            return redirect(url_for(f"map_center.map_by_{option}"))
         except LonLatResolutionException:
             flash(f"Longitude and latitude resolution is not equal. Interpolation impossible. "
                   f"Please choose 'Whole dataset' mode.", category="warning")
             return redirect(url_for(f"map_center.map_by_{option}"))
 
         if option == "country":
-
             boundaries = None
             country_code = form.country.data
             default_location = get_country_centroid(form.country.data)

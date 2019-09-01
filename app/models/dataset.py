@@ -22,4 +22,5 @@ class DatasetInfo(db.Model):
     year = db.Column(db.SmallInteger)
     lon_resolution = db.Column(db.Float)
     lat_resolution = db.Column(db.Float)
+    relative_data = db.Column(db.Boolean)
     __table_args__ = (UniqueConstraint('compound', 'physical_quantity', 'name', 'year', name='dataset_info'),)

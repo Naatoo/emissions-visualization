@@ -7,7 +7,7 @@ from app.database.database import db
 from app.models.dataset import DatasetInfo, DatasetValues
 from app.models.countries import Countries
 from app.models.auth import User
-from app.tools.exceptions import LonLatResolutionException
+from app.tools.exceptions import LonLatResolutionException, ZoomingRelativeDataException
 
 
 def insert_new_file_data(parser, **kwargs):
@@ -21,6 +21,7 @@ def insert_new_file_data(parser, **kwargs):
         name=kwargs["name"],
         lon_resolution=kwargs["lon_resolution"],
         lat_resolution=kwargs["lat_resolution"],
+        relative_data=kwargs["relative_data"],
     ))
     db.session.commit()
     for (lon, lat, value) in parser.rows_generator():
@@ -88,9 +89,15 @@ def get_selected_data_str():
 
 
 def assert_lon_lat_resolution_identical(dataset_hash):
-    data = DatasetInfo.query.filter_by(dataset_hash=dataset_hash).one()
+    data = get_data_metadata(dataset_hash)
     if float(data.lon_resolution) != float(data.lat_resolution):
         raise LonLatResolutionException
+
+
+def assert_zooming_relative_data(dataset_hash, zoom_value: int):
+    data = get_data_metadata(dataset_hash)
+    if zoom_value != 0 and data.relative_data is False:
+        raise ZoomingRelativeDataException
 
 
 def get_boundary_values_for_dataset(dataset_hash: str) -> dict:

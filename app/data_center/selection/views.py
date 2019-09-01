@@ -21,7 +21,7 @@ def choose_data():
         })
     data = DatasetInfo.query.all()
     table_data = [[row.dataset_hash, row.name, row.compound, row.physical_quantity,
-                   row.unit, row.year, row.lon_resolution, row.lat_resolution] for row in data]
+                   row.unit, row.year, row.lon_resolution, row.lat_resolution, row.relative_data] for row in data]
     dataset_hash = app.config.get('CURRENT_DATA_HASH')
     selected_data_str = get_selected_data_str()
     return render_template("data_center_select.html", rows=table_data, current_hash=dataset_hash,
