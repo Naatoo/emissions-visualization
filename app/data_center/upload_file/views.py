@@ -16,19 +16,19 @@ def upload_file():
     form = UploadFileForm()
     if form.is_submitted():
         filename = secure_filename(form.file.data.filename)
-        possible_extensions = "xlsx", "txt",
+        possible_extensions = {"xlsx": "xlsx", "emep": "txt"}
         form.file.data.save(UPLOADED_FILE)
+        file_type = form.file_type.data
         error_msg = None
-
-        if not filename.endswith(possible_extensions):
-            error_msg = f"{filename} has other extension then possible: {possible_extensions}."
-        if not validate_file_coordinates_unique(filename):
+        if not filename.endswith(possible_extensions[file_type]):
+            error_msg = f"{filename} has other extension than expected for this file type: {file_type}."
+        elif not validate_file_coordinates_unique(filename):
             error_msg = f"{filename} has non-unique coordinates."
         if error_msg is not None:
             flash(error_msg, category="danger")
             return render_template("data_center_upload_file.html", form=form, selected_data_str=get_selected_data_str())
         else:
-            return redirect(url_for("data_center_add_data.add_data", file_type=form.file_type.data))
+            return redirect(url_for("data_center_add_data.add_data", file_type=file_type))
 
     return render_template("data_center_upload_file.html", form=form, selected_data_str=get_selected_data_str())
 
