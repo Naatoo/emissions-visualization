@@ -3,6 +3,7 @@ import pandas
 from typing import Generator
 
 from app.data_center.loader.generic_parser import GenericParser
+from app.tools.exceptions import WrongColNamesException
 
 
 class ExcelFileParser(GenericParser):
@@ -14,6 +15,8 @@ class ExcelFileParser(GenericParser):
 
     def _get_rows(self) -> Generator[tuple, None, None]:
         data = pandas.read_excel(self.file_name).to_dict('list')
+        if [key for key in data.keys()] != ['lon', 'lat', 'value']:
+            raise WrongColNamesException
         yield from zip(data['lon'], data['lat'], data['value'])
 
     @property

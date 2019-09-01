@@ -22,4 +22,4 @@ TEMP_MAP_CENTER_DIR = os.path.join(MAP_CENTER_DIR, "temp/")
 COORDINATES_FILE = os.path.join(TEMP_MAP_CENTER_DIR, "coordinates.json")
 VALUES_FILE = os.path.join(TEMP_MAP_CENTER_DIR, "values.csv")
 
-UPLOADED_FILE = os.path.join(MAIN_DIR, "data_center/upload_file/temp/file")
+UPLOADED_FILE_DIR = os.path.join(MAIN_DIR, "data_center/upload_file/temp")

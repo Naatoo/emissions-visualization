@@ -8,3 +8,7 @@ class NoChosenCoordsInDatasetException(Exception):
 
 class ZoomingRelativeDataException(Exception):
     pass
+
+
+class WrongColNamesException(Exception):
+    pass
