@@ -47,7 +47,8 @@ def delete(value):
 def confirm_delete(value):
     # TODO set default data hash
     metadata = get_data_metadata(value)
-    flash(f"DELETED: Data {metadata.name} of {metadata.physical_quantity} from year {metadata.year}.", category='info')
+    flash(f"Dataset {metadata.name}, {metadata.compound}, {metadata.physical_quantity}, {metadata.year} was removed.",
+          category='info')
     delete_data(value)
     if app.config.get('CURRENT_DATA_HASH') == value:
         del app.config['CURRENT_DATA_HASH']
