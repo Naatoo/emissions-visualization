@@ -27,7 +27,7 @@ def add_data(file_type):
         year = form.year.data
         lon_resolution = form.lon_resolution.data
         lat_resolution = form.lat_resolution.data
-        relative_data = True if form.relative_data.data else False
+        relative_data = True if int(form.relative_data.data) else False
         metadata = {
             "name": name,
             "compound": compound,

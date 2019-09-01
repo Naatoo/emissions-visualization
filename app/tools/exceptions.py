@@ -4,3 +4,7 @@ class LonLatResolutionException(Exception):
 
 class NoChosenCoordsInDatasetException(Exception):
     pass
+
+
+class ZoomingRelativeDataException(Exception):
+    pass

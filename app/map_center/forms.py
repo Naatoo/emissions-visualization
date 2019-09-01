@@ -27,7 +27,7 @@ class MapForm(FlaskForm):
 
 class InterpolationForm(MapForm):
     zoom = SelectField('Zoom', validators=[DataRequired()],
-                       choices=[("1", "No zooming"), ("2", "x2"), ("3", "x3"), ("5", "x5"), ("10", "x10")], default=2)
+                       choices=[("1", "No zooming"), ("2", "x2"), ("3", "x3"), ("5", "x5"), ("10", "x10")], default=1)
     interpolation_type = SelectField("Interpolation type", validators=[DataRequired()],
                                      choices=[(0, "Nearest neighbour"), (1, "Bilinear"), (3, "Bicubic")], default=3)
 
