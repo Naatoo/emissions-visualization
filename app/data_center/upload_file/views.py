@@ -9,6 +9,7 @@ from app.data_center.loader.excel_parser import ExcelFileParser
 from app.data_center.upload_file import data_center_upload_file
 from app.data_center.upload_file.forms import UploadFileForm
 from app.database.queries import get_selected_data_str
+from app.tools.exceptions import WrongColNamesException
 from app.tools.paths import UPLOADED_FILE_DIR
 
 
@@ -22,11 +23,10 @@ def upload_file():
         file_type = form.file_type.data
         form.file.data.save(f'{UPLOADED_FILE_DIR}/{filename}')
         possible_extensions = {"xlsx": "xlsx", "emep": "txt"}
-        error_msg = None
         if not filename.endswith(possible_extensions[file_type]):
             error_msg = f"{filename} has other extension than expected for this file type: {file_type}."
-        elif not validate_file_coordinates_unique(filename):
-            error_msg = f"{filename} has non-unique coordinates."
+        else:
+            error_msg = validate_file_coordinates_unique(filename)
         if error_msg is not None:
             flash(error_msg, category="danger")
             remove_previously_uploaded_file()
@@ -38,16 +38,23 @@ def upload_file():
     return render_template("data_center_upload_file.html", form=form, selected_data_str=get_selected_data_str())
 
 
-def validate_file_coordinates_unique(filename: str) -> bool:
+def validate_file_coordinates_unique(filename: str) -> str:
     extension = filename.split(".")[1]
     parsers_mapping = {
         "xlsx": ExcelFileParser,
         "txt": EmepTxtFileParser
     }
     file_path = next(f'{UPLOADED_FILE_DIR}/{file}' for file in os.listdir(UPLOADED_FILE_DIR))
-    rows_len = len(list(parsers_mapping[extension](file_path).rows_generator()))
+    error_msg = None
+    try:
+        rows_len = len(list(parsers_mapping[extension](file_path).rows_generator()))
+    except WrongColNamesException:
+        error_msg = "Column names must be: 'lon', 'lat, 'value'."
+        return error_msg
     unique_rows_len = len(list(set(tup[:2] for tup in parsers_mapping[extension](file_path).rows_generator())))
-    return rows_len == unique_rows_len
+    if rows_len != unique_rows_len:
+        error_msg = f"{filename} has non-unique coordinates."
+    return error_msg
 
 
 def remove_previously_uploaded_file():
