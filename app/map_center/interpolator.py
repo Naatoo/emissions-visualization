@@ -54,7 +54,7 @@ class Interpolator:
 
         cond = any((any((boundary_coordinates["lon_max"] < chosen_coords["lon_min"],
                          boundary_coordinates["lon_min"] > chosen_coords["lon_max"])),
-                    any((boundary_coordinates["lon_max"] < chosen_coords["lon_min"],
+                    any((boundary_coordinates["lat_max"] < chosen_coords["lat_min"],
                          boundary_coordinates["lat_min"] > chosen_coords["lat_max"]))))
         if cond:
             raise NoChosenCoordsInDatasetException

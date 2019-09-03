@@ -11,16 +11,14 @@ lat,lon,code,name
 40,45,AM,Armenia
 12.5,-69.966667,AA,Aruba
 -15.95,-5.7,SH,Ascension
--12.416667,123.333333,AT,Ashmore and Cartier Islands
 -25,135,AS,Australia
-47.333333,13.333333,AU,Austria
-40.5,47.5,AJ,Azerbaijan
+47.333333,13.333333,AT,Austria
+40.5,47.5,AZ,Azerbaijan
 24,-76,BF,Bahamas
 26,50.5,BA,Bahrain
-24,90,BG,Bangladesh
 13.166667,-59.533333,BB,Barbados
 -21.416667,39.7,BS,Bassas da India
-53,28,BO,Belarus
+53,28,BY,Belarus
 50.833333,4,BE,Belgium
 17.25,-88.75,BH,Belize
 9.5,2.25,BN,Benin
@@ -35,10 +33,9 @@ lat,lon,code,name
 -6,72,IO,British Indian Ocean Territory
 18.5,-64.5,VI,British Virgin Islands
 4.5,114.666667,BX,Brunei
-43,25,BU,Bulgaria
+43,25,BG,Bulgaria
 13,-2,UV,Burkina Faso
 22,98,BM,Burma
--3.5,30,BY,Burundi
 13,105,CB,Cambodia
 6,12,CM,Cameroon
 60,-96,CA,Canada
@@ -47,7 +44,6 @@ lat,lon,code,name
 7,21,CT,Central African Republic
 15,19,CD,Chad
 -30,-71,CI,Chile
-35,105,CH,China
 -10.5,105.666667,KT,Christmas Island
 10.283333,-109.216667,IP,Clipperton Island
 -12,96.833333,CK,Cocos (Keeling) Islands
@@ -63,16 +59,15 @@ lat,lon,code,name
 35,33,CY,Cyprus
 49.75,15,CZ,Czech Republic
 0,25,CG,Democratic Republic of the Congo
-56,10,DA,Denmark
+56,10,DK,Denmark
 11.5,42.5,DJ,Djibouti
 15.5,-61.333333,DO,Dominica
 19,-70.666667,DR,Dominican Republic
 -2,-77.5,EC,Ecuador
 27,30,EG,Egypt
-13.833333,-88.916667,ES,El Salvador
 2,10,EK,Equatorial Guinea
 15,39,ER,Eritrea
-59,26,EN,Estonia
+59,26,EE,Estonia
 8,38,ET,Ethiopia
 -22.333333,40.366667,EU,Europa Island
 -51.75,-59.166667,FK,Falkland Islands
@@ -84,11 +79,10 @@ lat,lon,code,name
 4,-53,FG,French Guiana
 -15,-140,FP,French Polynesia
 -43,67,FS,French Southern and Antarctic Lands
--1,11.75,GB,Gabon
 13.5,-15.5,GA,Gambia
 31.425074,34.373398,GZ,Gaza Strip
-41.999981,43.499905,GG,Georgia
-51.5,10.5,GM,Germany
+41.999981,43.499905,GE,Georgia
+51.5,10.5,DE,Germany
 8,-2,GH,Ghana
 36.133333,-5.35,GI,Gibraltar
 -11.5,47.333333,GO,Glorioso Islands
@@ -107,14 +101,13 @@ lat,lon,code,name
 15,-86.5,HO,Honduras
 22.25,114.166667,HK,Hong Kong
 47,20,HU,Hungary
-65,-18,IC,Iceland
+65,-18,IS,Iceland
 20,77,IN,India
 -5,120,ID,Indonesia
 32,53,IR,Iran
 33,44,IZ,Iraq
-53,-8,EI,Ireland
+53,-8,IE,Ireland
 54.25,-4.5,IM,Isle of Man
-31.5,34.75,IS,Israel
 42.833333,12.833333,IT,Italy
 18.25,-77.5,JM,Jamaica
 36,138,JA,Japan
@@ -124,19 +117,16 @@ lat,lon,code,name
 48,68,KZ,Kazakhstan
 1,38,KE,Kenya
 -5,-170,KR,Kiribati
-42.583333,21,KV,Kosovo
+42.583333,21,XK,Kosovo
 29.5,47.75,KU,Kuwait
 41,75,KG,Kyrgyzstan
 18,105,LA,Laos
-57,25,LG,Latvia
+57,25,LV,Latvia
 33.833333,35.833333,LE,Lebanon
--29.5,28.25,LT,Lesotho
-6.5,-9.5,LI,Liberia
 25,17,LY,Libya
-47.166667,9.533333,LS,Liechtenstein
-56,24,LH,Lithuania
+47.166667,9.533333,LI,Liechtenstein
+56,24,LT,Lithuania
 49.75,6.166667,LU,Luxembourg
-22.157778,113.559722,MC,Macau
 41.833333,22,MK,Macedonia
 -20,47,MA,Madagascar
 -13.5,34,MI,Malawi
@@ -153,7 +143,7 @@ lat,lon,code,name
 47,29,MD,Moldova
 43.733333,7.4,MN,Monaco
 46,105,MG,Mongolia
-42.5,19.3,MJ,Montenegro
+42.5,19.3,ME,Montenegro
 16.75,-62.2,MH,Montserrat
 32,-5,MO,Morocco
 -18.25,35,MZ,Mozambique
@@ -181,13 +171,13 @@ lat,lon,code,name
 13,122,RP,Philippines
 -25.066667,-130.1,PC,Pitcairn Islands
 52,20,PL,Poland
-39.5,-8,PO,Portugal
+39.5,-8,PT,Portugal
 18.2482882,-66.4998941,PR,Puerto Rico
 25.5,51.25,QA,Qatar
 -1,15,CF,Republic of the Congo
 -21.1,55.6,RE,Reunion
 46,25,RO,Romania
-60,100,RS,Russia
+60,100,RU,Russia
 -2,30,RW,Rwanda
 17.9,-62.833333,TB,Saint Barthelemy
 17.333333,-62.75,SC,Saint Kitts and Nevis
@@ -200,8 +190,7 @@ lat,lon,code,name
 1,7,TP,Sao Tome and Principe
 25,45,SA,Saudi Arabia
 14,-14,SG,Senegal
-44,21,RI,Serbia
--4.583333,55.666667,SE,Seychelles
+44,21,RS,Serbia
 8.5,-11.5,SL,Sierra Leone
 1.366667,103.8,SN,Singapore
 18.04167,-63.06667,NN,Sint Maarten
@@ -219,8 +208,8 @@ lat,lon,code,name
 4,-56,NS,Suriname
 78,20,SV,Svalbard
 -26.5,31.5,WZ,Swaziland
-62,15,SW,Sweden
-47,8,SZ,Switzerland
+62,15,SE,Sweden
+47,8,CH,Switzerland
 35,38,SY,Syria
 24,121,TW,Taiwan
 39,71,TI,Tajikistan
@@ -233,14 +222,14 @@ lat,lon,code,name
 11,-61,TD,Trinidad and Tobago
 -15.866667,54.416667,TE,Tromelin Island
 34,9,TS,Tunisia
-39.059012,34.911546,TU,Turkey
+39.059012,34.911546,TR,Turkey
 40,60,TX,Turkmenistan
 21.733333,-71.583333,TK,Turks and Caicos Islands
 -8,178,TV,Tuvalu
 2,33,UG,Uganda
-49,32,UP,Ukraine
+49,32,UA,Ukraine
 24,54,AE,United Arab Emirates
-54,-4,UK,United Kingdom
+54,-4,GB,United Kingdom
 39.828175,-98.5795,US,United States
 -33,-56,UY,Uruguay
 5.8811111,-162.0725,UM,US Minor Outlying Islands
