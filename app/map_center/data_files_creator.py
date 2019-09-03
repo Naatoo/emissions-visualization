@@ -25,7 +25,7 @@ class DataFilesCreator:
             if reverse_geocode.get((lat, lon))["country_code"] == self.country_code or self.country_code is None:
                 coords = self.generate_square_coordinates(str(lon), str(lat), lon_coeff, lat_coeff)
                 value = values[index]
-                if value > 0.01:
+                if value > 1:
                     yield coords, value
 
     def _generate_collection_indexed_values(self, coordinates, values):

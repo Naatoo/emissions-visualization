@@ -18,10 +18,13 @@ class MapForm(FlaskForm):
     fill_opacity = SelectField('Fill opacity', validators=[DataRequired()],
                                choices=[((round(val * 0.1, 1)), round((val * 0.1), 1)) for val in range(11)],
                                default=0.7)
-    color = SelectField('Colors', choices=[(color, color) for color in [
-        'Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
-        'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
-        'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn']], default="Oranges")
+    color = SelectField('Colors', choices=[('Greys', 'Greys'), ('Purples', 'Purples'), ('Blues', 'Blues'),
+                                           ('Greens', 'Greens'), ('Oranges', 'Oranges'), ('Reds', 'Reds'),
+                                           ('YlOrBr', "YellowOrangeBrown "), ('YlOrRd', 'YellowOrangeRed'),
+                                           ('OrRd', "OrangeRed"), ('PuRd', 'PurpleRed'), ('RdPu', 'RedPurple'),
+                                           ('BuPu', "BluePurple"), ('GnBu', "GreenBlue"), ('PuBu', "PurpleBlue"),
+                                           ('YlGnBu', "YellowGreenBlue"), ('PuBuGn', "PurpleBlueGreen"),
+                                           ('BuGn', "BlueGreen"), ('YlGn', "YellowGreen")], default="Oranges")
     submit = SubmitField('Refresh')
 
 
