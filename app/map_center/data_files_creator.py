@@ -4,6 +4,7 @@ from typing import Generator
 import reverse_geocode
 from geojson import Feature, Polygon, FeatureCollection
 
+from app.tools.exceptions import NoChosenCoordsInDatasetException
 from app.tools.paths import COORDINATES_FILE, VALUES_FILE
 
 
@@ -35,6 +36,8 @@ class DataFilesCreator:
                 features.append(feature)
                 final_values.append((index, value))
         collection = FeatureCollection(features)
+        if not final_values and self.country_code:
+            raise NoChosenCoordsInDatasetException
         return collection, final_values
 
     @staticmethod
