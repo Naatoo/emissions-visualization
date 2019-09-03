@@ -1,5 +1,4 @@
 Albania,AL
-Andorra,AD
 Austria,AT
 Azerbaijan,AZ
 Belarus,BY
@@ -20,15 +19,12 @@ Iceland,IS
 Ireland,IE
 Italy,IT
 Kazakhstan,KZ
-Kosovo,XK
 Latvia,LV
-Liechtenstein,LI
 Lithuania,LT
 Luxembourg,LU
 Macedonia,MK
 Malta,MT
 Moldova,MD
-Monaco,MC
 Montenegro,ME
 Netherlands,NL
 Norway,NO
@@ -36,7 +32,6 @@ Poland,PL
 Portugal,PT
 Romania,RO
 Russia,RU
-San Marino,SM
 Serbia,RS
 Slovakia,SK
 Slovenia,SI
@@ -46,4 +41,3 @@ Switzerland,CH
 Turkey,TR
 Ukraine,UA
 United Kingdom,GB
-Vatican City,VA
