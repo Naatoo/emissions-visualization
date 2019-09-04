@@ -49,7 +49,7 @@ def add_data():
             flash("Longitude and latitude resolution must be numbers.", category='warning')
             return redirect(url_for("data_center_upload_file.upload_file"))
         insert_new_file_data(parser, **metadata)
-        flash(f"Dataset {name}, {compound}, {physical_quantity}, {year} was added.", category='success')
+        flash(f"Dataset {name}, {physical_quantity}, {compound},  {unit}, {year} was added.", category='success')
         return redirect(url_for("data_center_upload_file.upload_file"))
     selected_data_str = get_selected_data_str()
     return render_template("data_center_add_data.html", form=form,
